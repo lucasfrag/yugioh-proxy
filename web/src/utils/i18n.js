@@ -70,6 +70,7 @@ const MENSAGENS = {
 
     'footer.ptCards': 'Cartas em português criadas por',
     'footer.enArt': 'Artes em inglês:',
+    'footer.github': 'Código-fonte no GitHub',
 
     'theme.duel-disk.name': 'Duel Disk',
     'theme.duel-disk.desc': 'Marinho e ciano, estilo HUD',
@@ -150,6 +151,7 @@ const MENSAGENS = {
 
     'footer.ptCards': 'Portuguese cards created by',
     'footer.enArt': 'English artwork:',
+    'footer.github': 'Source code on GitHub',
 
     'theme.duel-disk.name': 'Duel Disk',
     'theme.duel-disk.desc': 'Navy and cyan, HUD style',

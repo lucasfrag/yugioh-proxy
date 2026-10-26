@@ -79,6 +79,8 @@
     .gh { display: inline-flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none; font: 600 0.9rem var(--font-display); letter-spacing: 1px; text-transform: uppercase; border: 1px solid var(--line-neutral); padding: 6px 12px; border-radius: 2px; }
     .gh:hover { border-color: var(--accent); color: var(--accent); }
     .gh svg { width: 18px; height: 18px; fill: currentColor; }
+    .open-app { color: #04121a; background: var(--accent); text-decoration: none; font: 700 0.9rem var(--font-display); letter-spacing: 1px; text-transform: uppercase; padding: 7px 14px; clip-path: var(--chamfer); white-space: nowrap; }
+    .open-app:hover { background: var(--accent-strong); }
 
     /* Hero */
     .hero { padding: 72px 0 40px; text-align: center; }
@@ -137,6 +139,7 @@
       .split, .split.reverse { grid-template-columns: 1fr; }
       .split.reverse .copy { order: 0; }
       .gh span { display: none; }
+      .open-app { padding: 7px 10px; }
       .brand span { font-size: 1.1rem; }
     }
   </style>
@@ -150,6 +153,7 @@
           <button type="button" data-lang="en" aria-pressed="true">EN</button>
           <button type="button" data-lang="pt" aria-pressed="false">PT</button>
         </div>
+        <a class="open-app" href="https://yugioh-proxy.pages.dev" data-i18n="nav.open"></a>
         <a class="gh" href="https://github.com/lucasfrag/yugioh-proxy">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
           <span>GitHub</span>
@@ -164,7 +168,8 @@
       <h1>Yu-Gi-Oh! <b>Proxies</b></h1>
       <p class="tag" data-i18n-html="hero.tag"></p>
       <div class="cta">
-        <a class="btn primary" href="#start" data-i18n="hero.start"></a>
+        <a class="btn primary" href="https://yugioh-proxy.pages.dev" data-i18n="hero.open"></a>
+        <a class="btn ghost" href="#start" data-i18n="hero.start"></a>
         <a class="btn ghost" href="https://github.com/lucasfrag/yugioh-proxy" data-i18n="hero.source"></a>
       </div>
       <div class="chips"><span data-i18n="chip.cards"></span><span data-i18n="chip.arts"></span><span data-i18n="chip.langs"></span><span data-i18n="chip.themes"></span></div>
@@ -274,7 +279,9 @@
       en: {
         title: 'Yu-Gi-Oh! Proxies — Build and print Yu-Gi-Oh! proxies',
         'hero.tag': 'Build and print <strong>Yu-Gi-Oh! proxies</strong> in seconds — every card, every alternate artwork, in <strong>English</strong> or <strong>Portuguese</strong>, laid out on print-accurate sheets.',
-        'hero.start': 'Get started',
+        'nav.open': 'Open the app',
+        'hero.open': '▶ Open the app',
+        'hero.start': 'Run locally',
         'hero.source': 'View source',
         'chip.cards': '14,600+ cards', 'chip.arts': 'Alt artworks', 'chip.langs': 'EN · PT-BR', 'chip.themes': '5 themes',
         'features.eyebrow': 'Features', 'features.title': 'Everything you need to proxy a deck',
@@ -292,10 +299,10 @@
         'print.eyebrow': 'Printing', 'print.title': 'Real size, ready to cut',
         'print.lead': 'The preview is the print: what you see on screen is exactly what comes out of the printer, or the PDF.',
         'print.l1': 'Official card size, adjustable from 70% to 130%', 'print.l2': 'Optional mirrored back pages for double-sided prints', 'print.l3': 'Cut borders and printer safety margin',
-        'start.eyebrow': 'Quick start', 'start.title': 'Run it on your machine',
-        'start.lead': 'You need <strong>Node.js 20.9+</strong> (the project ships an <code>.nvmrc</code> for <a href="https://github.com/nvm-sh/nvm">nvm</a>). One script installs everything, builds the site and opens it at <code>http://localhost:3000</code>.',
+        'start.eyebrow': 'Quick start', 'start.title': 'Use it online or run it locally',
+        'start.lead': 'The fastest way is the <a href="https://yugioh-proxy.pages.dev">online version</a> — free, no sign-up, nothing to install. To run it on your machine (with the Portuguese cards), you need <strong>Node.js 20.9+</strong> (the project ships an <code>.nvmrc</code> for <a href="https://github.com/nvm-sh/nvm">nvm</a>). One script installs everything, builds the site and opens it at <code>http://localhost:3000</code>.',
         'start.c1': '# install, build and start', 'start.c2': '# download the Portuguese HD cards (optional)', 'start.c3': '# development mode with hot reload',
-        'start.note': 'There is no hosted version yet: the app runs locally because it caches card images on your machine instead of hotlinking them. Portuguese cards are downloaded straight from their creator’s public folder — this project hosts none of them.',
+        'start.note': 'The online version is a static build on Cloudflare Pages with English artwork only: card images are hosted copies, never hotlinked. Portuguese cards are only available locally, downloaded straight from their creator’s public folder — this project hosts none of them.',
         'credits.eyebrow': 'Credits', 'credits.title': 'Built on the work of others',
         'credits.emula': 'Created the Portuguese HD cards and shares them for free at <a href="https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html">Cartas Caseiras</a>.',
         'credits.ruan': 'The original proxy maker by <a href="https://github.com/Ruancard">Ruan Cardoso</a>, which this project builds upon.',
@@ -306,7 +313,9 @@
       pt: {
         title: 'Yu-Gi-Oh! Proxies — Monte e imprima proxies de Yu-Gi-Oh!',
         'hero.tag': 'Monte e imprima <strong>proxies de Yu-Gi-Oh!</strong> em segundos — todas as cartas, todas as artes alternativas, em <strong>português</strong> ou <strong>inglês</strong>, em folhas no tamanho exato de impressão.',
-        'hero.start': 'Começar',
+        'nav.open': 'Abrir o app',
+        'hero.open': '▶ Abrir o app',
+        'hero.start': 'Rodar localmente',
         'hero.source': 'Ver código',
         'chip.cards': '14.600+ cartas', 'chip.arts': 'Artes alternativas', 'chip.langs': 'PT-BR · EN', 'chip.themes': '5 temas',
         'features.eyebrow': 'Recursos', 'features.title': 'Tudo para montar as proxies do seu deck',
@@ -324,10 +333,10 @@
         'print.eyebrow': 'Impressão', 'print.title': 'Tamanho real, pronto para recortar',
         'print.lead': 'A prévia é a impressão: o que aparece na tela é exatamente o que sai na impressora, ou no PDF.',
         'print.l1': 'Tamanho oficial da carta, ajustável de 70% a 130%', 'print.l2': 'Páginas de verso espelhadas opcionais, para frente e verso', 'print.l3': 'Borda de corte e margem de segurança da impressora',
-        'start.eyebrow': 'Como rodar', 'start.title': 'Rode na sua máquina',
-        'start.lead': 'Você precisa do <strong>Node.js 20.9+</strong> (o projeto traz um <code>.nvmrc</code> para o <a href="https://github.com/nvm-sh/nvm">nvm</a>). Um script instala tudo, gera o site e abre em <code>http://localhost:3000</code>.',
+        'start.eyebrow': 'Como usar', 'start.title': 'Use online ou rode na sua máquina',
+        'start.lead': 'O jeito mais rápido é a <a href="https://yugioh-proxy.pages.dev">versão online</a> — de graça, sem cadastro e sem instalar nada. Para rodar na sua máquina (com as cartas em português), você precisa do <strong>Node.js 20.9+</strong> (o projeto traz um <code>.nvmrc</code> para o <a href="https://github.com/nvm-sh/nvm">nvm</a>). Um script instala tudo, gera o site e abre em <code>http://localhost:3000</code>.',
         'start.c1': '# instala, gera o site e sobe', 'start.c2': '# baixa as cartas em português em HD (opcional)', 'start.c3': '# modo desenvolvimento, recarrega ao editar',
-        'start.note': 'Ainda não há uma versão hospedada: o app roda localmente porque guarda as imagens das cartas na sua máquina em vez de puxá-las de outros sites. As cartas em português são baixadas direto da pasta pública do criador — este projeto não hospeda nenhuma delas.',
+        'start.note': 'A versão online é um build estático no Cloudflare Pages, só com as artes em inglês: as imagens das cartas são cópias hospedadas, nunca puxadas direto de outro site. As cartas em português só ficam disponíveis localmente, baixadas direto da pasta pública do criador — este projeto não hospeda nenhuma delas.',
         'credits.eyebrow': 'Créditos', 'credits.title': 'Feito sobre o trabalho de outras pessoas',
         'credits.emula': 'Criou as cartas em português em HD e as distribui de graça no blog <a href="https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html">Cartas Caseiras</a>.',
         'credits.ruan': 'O proxy maker original de <a href="https://github.com/Ruancard">Ruan Cardoso</a>, base deste projeto.',

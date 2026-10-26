@@ -3,11 +3,16 @@
 </p>
 
 <p align="center">
+  <a href="https://yugioh-proxy.pages.dev"><img alt="Open the app — yugioh-proxy.pages.dev" src="https://img.shields.io/badge/%E2%96%B6%20Open%20the%20app-yugioh--proxy.pages.dev-22d3ee?style=for-the-badge&labelColor=060a14" height="36" /></a>
+</p>
+
+<p align="center">
   <b>English</b> · <a href="README.pt-BR.md">Português (Brasil)</a>
 </p>
 
 <p align="center">
-  <a href="https://lucasfrag.github.io/yugioh-proxy/"><img alt="Website" src="https://img.shields.io/badge/website-lucasfrag.github.io-22d3ee?style=flat-square&labelColor=060a14" /></a>
+  <a href="https://yugioh-proxy.pages.dev"><img alt="Live app" src="https://img.shields.io/badge/live-yugioh--proxy.pages.dev-22d3ee?style=flat-square&labelColor=060a14" /></a>
+  <a href="https://lucasfrag.github.io/yugioh-proxy/"><img alt="Project page" src="https://img.shields.io/badge/project%20page-lucasfrag.github.io-6366f1?style=flat-square&labelColor=060a14" /></a>
   <img alt="Node.js 20.9+" src="https://img.shields.io/badge/node-%E2%89%A520.9-22d3ee?style=flat-square&logo=nodedotjs&logoColor=white&labelColor=060a14" />
   <img alt="React 19" src="https://img.shields.io/badge/react-19-22d3ee?style=flat-square&logo=react&logoColor=white&labelColor=060a14" />
   <img alt="Vite 8" src="https://img.shields.io/badge/vite-8-22d3ee?style=flat-square&logo=vite&logoColor=white&labelColor=060a14" />
@@ -25,6 +30,8 @@
 </p>
 
 **Yu-Gi-Oh! Proxies** is a web app to build and print Yu-Gi-Oh! proxy cards for casual play and deck testing. Search any of the 14,600+ cards, pick the exact artwork you want — in English or in Portuguese — and print sheets at the official card size, ready to cut.
+
+**👉 Use it online, free and with no sign-up: [yugioh-proxy.pages.dev](https://yugioh-proxy.pages.dev)**
 
 <p align="center">
   <img src="docs/screenshots/en/main.webp" alt="Main screen: card list on the left, print preview in the center and print settings on the right" width="100%" />
@@ -53,7 +60,9 @@
 
 ## 🚀 Quick start
 
-You need **Node.js 20.9 or newer**. The project ships an `.nvmrc`, so if you use [nvm](https://github.com/nvm-sh/nvm) the script picks the right version by itself.
+**Online:** just open **[yugioh-proxy.pages.dev](https://yugioh-proxy.pages.dev)** — nothing to install.
+
+**On your machine:** you need **Node.js 20.9 or newer**. The project ships an `.nvmrc`, so if you use [nvm](https://github.com/nvm-sh/nvm) the script picks the right version by itself.
 
 ```bash
 git clone https://github.com/lucasfrag/yugioh-proxy.git
@@ -73,7 +82,7 @@ Then open **http://localhost:3000**. On the first run, `run.sh` installs the dep
 Use another port with `PORT=8080 ./run.sh`.
 
 > [!NOTE]
-> There is no hosted version yet. The app runs on your machine because it downloads and caches card images locally instead of hotlinking them, as YGOPRODeck asks. The [project website](https://lucasfrag.github.io/yugioh-proxy/) is a presentation page.
+> The [online version](https://yugioh-proxy.pages.dev) is a static build hosted for free on Cloudflare Pages: search runs in your browser and card images are hosted copies, never hotlinked (as YGOPRODeck asks). For now it has **English artwork only**; the Portuguese cards are available when you run the app locally (`./run.sh cartas-pt`).
 
 ## 🇧🇷 Portuguese cards
 
@@ -133,6 +142,20 @@ yugioh-proxy/
 | `GET /api/cartas/:id/imagens` | All images of a card, grouped by language (`pt`, `en`, `ocg`) |
 | `GET /api/cartas/backs` | Available card backs |
 | `GET /api` | Interactive API documentation page |
+
+</details>
+
+<details>
+<summary><b>Publishing the static version</b></summary>
+
+The online version has no server: search runs in the browser and every image is a file of the site.
+
+```bash
+npm run site-estatico   # builds site-estatico/: card index, English artwork as WebP, card backs and the site
+npm run publicar        # uploads it to Cloudflare Pages (needs `npx wrangler login` once)
+```
+
+The first build downloads each English artwork from YGOPRODeck **once** (≈14,800 images, ~1.8 GB, at most 10 requests per second) and can be interrupted and resumed. Later builds and uploads only send what changed. The result stays under the 20,000-file limit of the Cloudflare Pages free plan. `npm run site-estatico -- --com-pt` also includes the Portuguese cards — only publish them with the creator's permission.
 
 </details>
 

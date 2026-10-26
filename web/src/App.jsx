@@ -227,6 +227,11 @@ export default function App() {
                 {' '}· {t('footer.enArt')}{' '}
                 <a href="https://ygoprodeck.com" target="_blank" rel="noopener noreferrer">YGOPRODeck</a>
               </p>
+              <p className="footer-source">
+                <a href="https://github.com/lucasfrag/yugioh-proxy" target="_blank" rel="noopener noreferrer">
+                  {t('footer.github')}
+                </a>
+              </p>
               <p className="footer-credits">Yu-Gi-Oh! Proxies &copy; {new Date().getFullYear()}</p>
             </footer>
           </div>

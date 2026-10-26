@@ -3,11 +3,16 @@
 </p>
 
 <p align="center">
+  <a href="https://yugioh-proxy.pages.dev"><img alt="Abrir o app — yugioh-proxy.pages.dev" src="https://img.shields.io/badge/%E2%96%B6%20Abrir%20o%20app-yugioh--proxy.pages.dev-22d3ee?style=for-the-badge&labelColor=060a14" height="36" /></a>
+</p>
+
+<p align="center">
   <a href="README.md">English</a> · <b>Português (Brasil)</b>
 </p>
 
 <p align="center">
-  <a href="https://lucasfrag.github.io/yugioh-proxy/"><img alt="Site" src="https://img.shields.io/badge/site-lucasfrag.github.io-22d3ee?style=flat-square&labelColor=060a14" /></a>
+  <a href="https://yugioh-proxy.pages.dev"><img alt="App online" src="https://img.shields.io/badge/online-yugioh--proxy.pages.dev-22d3ee?style=flat-square&labelColor=060a14" /></a>
+  <a href="https://lucasfrag.github.io/yugioh-proxy/"><img alt="Página do projeto" src="https://img.shields.io/badge/p%C3%A1gina%20do%20projeto-lucasfrag.github.io-6366f1?style=flat-square&labelColor=060a14" /></a>
   <img alt="Node.js 20.9+" src="https://img.shields.io/badge/node-%E2%89%A520.9-22d3ee?style=flat-square&logo=nodedotjs&logoColor=white&labelColor=060a14" />
   <img alt="React 19" src="https://img.shields.io/badge/react-19-22d3ee?style=flat-square&logo=react&logoColor=white&labelColor=060a14" />
   <img alt="Vite 8" src="https://img.shields.io/badge/vite-8-22d3ee?style=flat-square&logo=vite&logoColor=white&labelColor=060a14" />
@@ -25,6 +30,8 @@
 </p>
 
 **Yu-Gi-Oh! Proxies** é um app web para montar e imprimir proxies de Yu-Gi-Oh! para partidas casuais e teste de decks. Busque qualquer uma das 14.600+ cartas, escolha exatamente a arte que você quer — em português ou em inglês — e imprima folhas no tamanho oficial da carta, prontas para recortar.
+
+**👉 Use online, de graça e sem cadastro: [yugioh-proxy.pages.dev](https://yugioh-proxy.pages.dev)**
 
 <p align="center">
   <img src="docs/screenshots/pt/main.webp" alt="Tela principal: lista de cartas à esquerda, prévia de impressão no centro e ajustes de impressão à direita" width="100%" />
@@ -53,7 +60,9 @@
 
 ## 🚀 Como rodar
 
-Você precisa do **Node.js 20.9 ou mais novo**. O projeto traz um `.nvmrc`; se você usa o [nvm](https://github.com/nvm-sh/nvm), o script ativa a versão certa sozinho.
+**Online:** é só abrir **[yugioh-proxy.pages.dev](https://yugioh-proxy.pages.dev)** — não precisa instalar nada.
+
+**Na sua máquina:** você precisa do **Node.js 20.9 ou mais novo**. O projeto traz um `.nvmrc`; se você usa o [nvm](https://github.com/nvm-sh/nvm), o script ativa a versão certa sozinho.
 
 ```bash
 git clone https://github.com/lucasfrag/yugioh-proxy.git
@@ -73,7 +82,7 @@ Depois abra **http://localhost:3000**. Na primeira vez, o `run.sh` instala as de
 Para usar outra porta: `PORT=8080 ./run.sh`.
 
 > [!NOTE]
-> Ainda não há uma versão hospedada. O app roda na sua máquina porque baixa e guarda as imagens das cartas localmente em vez de puxá-las direto de outros sites, como o YGOPRODeck pede. O [site do projeto](https://lucasfrag.github.io/yugioh-proxy/) é uma página de apresentação.
+> A [versão online](https://yugioh-proxy.pages.dev) é um build estático hospedado de graça no Cloudflare Pages: a busca roda no seu navegador e as imagens das cartas são cópias hospedadas, nunca puxadas direto de outro site (como o YGOPRODeck pede). Por enquanto ela tem **só as artes em inglês**; as cartas em português ficam disponíveis rodando o app localmente (`./run.sh cartas-pt`).
 
 ## 🇧🇷 Cartas em português
 
@@ -133,6 +142,20 @@ yugioh-proxy/
 | `GET /api/cartas/:id/imagens` | Todas as imagens de uma carta, por idioma (`pt`, `en`, `ocg`) |
 | `GET /api/cartas/backs` | Versos disponíveis |
 | `GET /api` | Página interativa de documentação da API |
+
+</details>
+
+<details>
+<summary><b>Publicando a versão estática</b></summary>
+
+A versão online não tem servidor: a busca roda no navegador e todas as imagens são arquivos do site.
+
+```bash
+npm run site-estatico   # gera site-estatico/: índice das cartas, artes em inglês em WebP, versos e o site
+npm run publicar        # envia para o Cloudflare Pages (precisa de `npx wrangler login` uma vez)
+```
+
+A primeira geração baixa cada arte em inglês do YGOPRODeck **uma única vez** (≈14.800 imagens, ~1,8 GB, no máximo 10 pedidos por segundo) e pode ser interrompida e retomada. As próximas gerações e publicações enviam só o que mudou. O resultado fica abaixo do limite de 20.000 arquivos do plano grátis do Cloudflare Pages. `npm run site-estatico -- --com-pt` inclui também as cartas em português — publique-as só com autorização do criador.
 
 </details>
 
