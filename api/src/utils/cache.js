@@ -1,18 +1,12 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
+const fs = require('fs/promises');
+const path = require('path');
 
-/** Remove acentos/pontuação para comparar nomes ("Dragão" == "dragao"). */
-export function normalize(text) {
-  return (text || '')
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
-}
-
-/** Executa no máximo `n` tarefas assíncronas ao mesmo tempo. */
-export function limiter(n) {
+/**
+ * Cria uma fila que executa no máximo `n` tarefas assíncronas ao mesmo tempo.
+ * @param {number} n
+ * @returns {(fn: () => Promise<any>) => Promise<any>}
+ */
+function limiter(n) {
   let active = 0;
   const queue = [];
   const next = () => {
@@ -30,7 +24,7 @@ export function limiter(n) {
   });
 }
 
-export async function readJson(file) {
+async function readJson(file) {
   try {
     return JSON.parse(await fs.readFile(file, 'utf8'));
   } catch {
@@ -38,7 +32,7 @@ export async function readJson(file) {
   }
 }
 
-export async function writeJson(file, data) {
+async function writeJson(file, data) {
   await fs.mkdir(path.dirname(file), { recursive: true });
   const tmp = `${file}.${process.pid}.tmp`;
   await fs.writeFile(tmp, JSON.stringify(data));
@@ -48,16 +42,23 @@ export async function writeJson(file, data) {
 const inflight = new Map();
 
 /**
- * Garante que `remoteUrl` esteja salvo em `localPath` (baixa só na primeira vez).
- * Downloads simultâneos do mesmo arquivo são deduplicados.
+ * Garante que `remoteUrl` esteja salvo em `localPath` (baixa apenas na primeira vez).
+ * Downloads simultâneos do mesmo arquivo são agrupados em um só.
+ *
+ * @param {string} localPath Caminho do arquivo no cache local
+ * @param {string} remoteUrl URL de origem da imagem
+ * @param {{ userAgent: string, queue: Function }} options
+ * @returns {Promise<string>}
  */
-export function ensureCached(localPath, remoteUrl, { userAgent, queue }) {
+function ensureCached(localPath, remoteUrl, { userAgent, queue }) {
   if (inflight.has(localPath)) return inflight.get(localPath);
   const job = (async () => {
     try {
       await fs.access(localPath);
       return localPath;
-    } catch { /* ainda não está em cache */ }
+    } catch {
+      // Ainda não está em cache
+    }
     const res = await queue(() => fetch(remoteUrl, { headers: { 'User-Agent': userAgent } }));
     const type = res.headers.get('content-type') || '';
     if (!res.ok || !type.startsWith('image/')) {
@@ -73,3 +74,5 @@ export function ensureCached(localPath, remoteUrl, { userAgent, queue }) {
   inflight.set(localPath, job);
   return job;
 }
+
+module.exports = { limiter, readJson, writeJson, ensureCached };

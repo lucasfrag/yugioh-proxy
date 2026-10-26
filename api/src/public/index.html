@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yu-Gi-Oh! API Português - Documentação & Explorer</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #07050f;
+      --bg-card: rgba(18, 14, 35, 0.7);
+      --bg-card-hover: rgba(26, 21, 50, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      
+      --color-primary: #8a2be2;
+      --color-primary-glow: rgba(138, 43, 226, 0.4);
+      --color-accent: #ff007f;
+      --color-text: #e0dcf5;
+      --color-text-muted: #9c97b8;
+      
+      --color-monster: #d37118;
+      --color-spell: #1d9e74;
+      --color-trap: #bc2c72;
+      --color-token: #727272;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--color-text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Background Neon Glows */
+    body::before, body::after {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      filter: blur(120px);
+      z-index: -1;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    body::before {
+      background-color: var(--color-primary);
+      top: -100px;
+      left: -100px;
+    }
+    body::after {
+      background-color: var(--color-accent);
+      bottom: -100px;
+      right: -100px;
+    }
+
+    header {
+      backdrop-filter: blur(12px);
+      background-color: rgba(7, 5, 15, 0.8);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.5rem 5%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+    }
+
+    .badge-pt {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+    }
+
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 3rem;
+    }
+
+    @media (max-width: 1024px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Column Styling */
+    .docs-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      border-left: 4px solid var(--color-primary);
+      padding-left: 12px;
+      color: #fff;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--color-text-muted);
+      max-width: 600px;
+    }
+
+    .search-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 1rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background-color: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 15px var(--color-primary-glow);
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #9333ea, #6b21a8);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 0 1.8rem;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(147, 51, 234, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .endpoints-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .endpoint-item {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .endpoint-item:hover {
+      background-color: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 0.5rem;
+    }
+
+    .method {
+      background-color: #2563eb;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .path {
+      font-family: monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .description {
+      font-size: 0.88rem;
+      color: var(--color-text-muted);
+      line-height: 1.4;
+    }
+
+    /* Right Column Styling: Yu-Gi-Oh Card View */
+    .preview-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .card-title-preview {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Glassmorphic Yugioh Card Frame */
+    .ygo-card-frame {
+      width: 350px;
+      height: 510px;
+      background-color: #12101e;
+      border-radius: 18px;
+      padding: 16px;
+      border: 3px solid #3c355c;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .ygo-card-frame::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 15px;
+      pointer-events: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 10;
+    }
+
+    /* Glowing borders based on Card Type */
+    .ygo-card-frame.monster { border-color: var(--color-monster); box-shadow: 0 0 30px rgba(211, 113, 24, 0.2), 0 20px 50px rgba(0,0,0,0.6); }
+    .ygo-card-frame.spell { border-color: var(--color-spell); box-shadow: 0 0 30px rgba(29, 158, 116, 0.2), 0 20px 50px rgba(0,0,0,0.6); }
+    .ygo-card-frame.trap { border-color: var(--color-trap); box-shadow: 0 0 30px rgba(188, 44, 114, 0.2), 0 20px 50px rgba(0,0,0,0.6); }
+    .ygo-card-frame.token { border-color: var(--color-token); box-shadow: 0 0 30px rgba(114, 114, 114, 0.2), 0 20px 50px rgba(0,0,0,0.6); }
+
+    /* Card Header */
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 6px;
+      height: 38px;
+    }
+
+    .card-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 240px;
+    }
+
+    .card-attribute {
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    .attribute-dark { background-color: #2b1f3c; border: 1px solid #7c3aed; }
+    .attribute-light { background-color: #4b4b2e; border: 1px solid #eab308; }
+    .attribute-fire { background-color: #451a1a; border: 1px solid #ef4444; }
+    .attribute-water { background-color: #1e3a5f; border: 1px solid #3b82f6; }
+    .attribute-wind { background-color: #1c3d2b; border: 1px solid #10b981; }
+    .attribute-earth { background-color: #3b2a1a; border: 1px solid #f97316; }
+    .attribute-divine { background-color: #553e1a; border: 1px solid #d97706; box-shadow: 0 0 10px #d97706; }
+    .attribute-spell { background-color: #0b3d30; border: 1px solid #059669; }
+    .attribute-trap { background-color: #420d2b; border: 1px solid #db2777; }
+
+    /* Card Subheaders / Level Star Row */
+    .card-level-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 4px;
+      height: 18px;
+    }
+
+    .level-star {
+      width: 14px;
+      height: 14px;
+      background-color: #eab308;
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      box-shadow: 0 0 4px #eab308;
+    }
+
+    /* Card Image Container */
+    .card-image-box {
+      flex: 1;
+      background-color: rgba(0,0,0,0.5);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .card-image-box img:hover {
+      transform: scale(1.05);
+    }
+
+    .card-placeholder-text {
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+      text-align: center;
+      padding: 1rem;
+    }
+
+    /* Card Image Gallery Indicators */
+    .card-gallery-row {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: -2px;
+      height: 12px;
+      z-index: 5;
+    }
+
+    .gallery-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .gallery-dot.active {
+      background-color: var(--color-primary);
+      box-shadow: 0 0 6px var(--color-primary);
+      transform: scale(1.2);
+    }
+
+    /* Card Text / Description Box */
+    .card-desc-box {
+      height: 110px;
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.72rem;
+      overflow-y: auto;
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-desc-box::-webkit-scrollbar {
+      width: 4px;
+    }
+    .card-desc-box::-webkit-scrollbar-thumb {
+      background-color: rgba(255,255,255,0.15);
+      border-radius: 4px;
+    }
+
+    .card-desc-types {
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+      font-size: 0.75rem;
+    }
+
+    .card-desc-effect {
+      color: #cccbdf;
+      font-style: italic;
+    }
+
+    /* Card Footer (ATK/DEF) */
+    .card-stats-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 16px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 6px;
+      height: 25px;
+    }
+
+    .stat-label {
+      color: var(--color-text-muted);
+      font-weight: 400;
+      font-size: 0.75rem;
+      margin-right: 4px;
+    }
+
+    .stat-value {
+      color: #fff;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .search-results-list {
+      margin-top: 10px;
+      max-height: 150px;
+      overflow-y: auto;
+      background-color: rgba(18, 14, 35, 0.9);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      z-index: 10;
+    }
+
+    .search-result-item {
+      padding: 10px 15px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: background-color 0.2s ease;
+    }
+
+    .search-result-item:hover {
+      background-color: var(--color-primary);
+      color: #fff;
+    }
+
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-container">
+      <span class="logo-text">Yu-Gi-Oh! API</span>
+      <span class="badge-pt">Português</span>
+    </div>
+    <div class="header-links">
+      <span style="color: var(--color-text-muted); font-size: 0.9rem;">v1.0.0</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Left Column -->
+    <div class="docs-section">
+      <div>
+        <h1>API de Cartas do Yu-Gi-Oh!</h1>
+        <p class="hero-subtitle">
+          Uma API local de alto desempenho em Node.js com tradução de tipos, atributos e vinculo com imagens locais em alta definição em português brasileiro.
+        </p>
+      </div>
+
+      <!-- Card Explorer (Interactive) -->
+      <div class="search-card">
+        <h2>Explore as Cartas</h2>
+        <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 8px;">
+          Pesquise por qualquer carta para carregar suas informações e imagem em alta definição no painel lateral.
+        </p>
+        <div class="search-group">
+          <input type="text" id="searchInput" placeholder="Ex: Mago Negro, Pote da Ganância, Buraco Armadilha..." value="Mago Negro">
+          <button class="btn" id="searchBtn">Buscar</button>
+        </div>
+        <div id="resultsList" class="search-results-list hidden"></div>
+      </div>
+
+      <!-- API Documentation -->
+      <div class="endpoints-card">
+        <h2>Endpoints da API</h2>
+        
+        <div class="endpoint-item">
+          <div class="endpoint-header">
+            <span class="method">GET</span>
+            <span class="path">/api/cartas</span>
+          </div>
+          <p class="description">
+            Retorna a lista de todas as cartas mapeadas com suporte a paginação e filtros de query parameters.
+          </p>
+          <div style="margin-top: 8px; font-family: monospace; font-size: 0.75rem; color: #a855f7;">
+            Query Params: nome, tipo_carta, tipo, atributo, nivel, page, limit
+          </div>
+        </div>
+
+        <div class="endpoint-item">
+          <div class="endpoint-header">
+            <span class="method">GET</span>
+            <span class="path">/api/cartas/:id</span>
+          </div>
+          <p class="description">
+            Retorna os detalhes completos em português de uma única carta especificada pelo seu ID numérico.
+          </p>
+        </div>
+
+        <div class="endpoint-item">
+          <div class="endpoint-header">
+            <span class="method">GET</span>
+            <span class="path">/api/cartas/nome/:nome</span>
+          </div>
+          <p class="description">
+            Retorna os detalhes de uma carta buscando pelo seu nome (em português ou inglês). Faz busca exata primeiro e depois parcial.
+          </p>
+        </div>
+
+        <div class="endpoint-item">
+          <div class="endpoint-header">
+            <span class="method" style="background-color: var(--color-spell);">STATIC</span>
+            <span class="path">/imagens/:categoria/:arquivo.png</span>
+          </div>
+          <p class="description">
+            Rota estática que serve os arquivos locais das cartas em alta resolução diretamente do disco.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive card render -->
+    <div class="preview-section">
+      <div class="card-title-preview">Visualização da Carta</div>
+
+      <!-- Card Frame -->
+      <div class="ygo-card-frame monster" id="cardFrame">
+        <!-- Title and Attribute -->
+        <div class="card-header">
+          <div class="card-name" id="cardName">Carregando...</div>
+          <div class="card-attribute attribute-dark" id="cardAttribute">Trevas</div>
+        </div>
+
+        <!-- Level Stars -->
+        <div class="card-level-row" id="cardLevelRow">
+          <!-- Dynamically populated level stars -->
+        </div>
+
+        <!-- Image Box -->
+        <div class="card-image-box">
+          <img id="cardImage" src="" alt="Imagem da carta" class="hidden">
+          <div id="cardImagePlaceholder" class="card-placeholder-text">Sem Imagem</div>
+        </div>
+
+        <!-- Galeria de Imagens Alternativas -->
+        <div class="card-gallery-row hidden" id="cardGalleryRow"></div>
+
+        <!-- Description Box -->
+        <div class="card-desc-box">
+          <div class="card-desc-types" id="cardTypes">Mago / Monstro Normal</div>
+          <div class="card-desc-effect" id="cardDesc">Selecione uma carta para visualizar os detalhes.</div>
+        </div>
+
+        <!-- Stats Footer (ATK/DEF) -->
+        <div class="card-stats-row" id="cardStatsRow">
+          <div><span class="stat-label">ATK /</span><span class="stat-value" id="cardAtk">2500</span></div>
+          <div><span class="stat-label">DEF /</span><span class="stat-value" id="cardDef">2100</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const resultsList = document.getElementById('resultsList');
+    
+    // Card elements
+    const cardFrame = document.getElementById('cardFrame');
+    const cardName = document.getElementById('cardName');
+    const cardAttribute = document.getElementById('cardAttribute');
+    const cardLevelRow = document.getElementById('cardLevelRow');
+    const cardImage = document.getElementById('cardImage');
+    const cardImagePlaceholder = document.getElementById('cardImagePlaceholder');
+    const cardTypes = document.getElementById('cardTypes');
+    const cardDesc = document.getElementById('cardDesc');
+    const cardStatsRow = document.getElementById('cardStatsRow');
+    const cardAtk = document.getElementById('cardAtk');
+    const cardDef = document.getElementById('cardDef');
+    const cardGalleryRow = document.getElementById('cardGalleryRow');
+
+    // Mapeamento de estilos CSS para Atributo
+    const ATTRIBUTE_CLASSES = {
+      'Trevas': 'attribute-dark',
+      'Luz': 'attribute-light',
+      'Fogo': 'attribute-fire',
+      'Água': 'attribute-water',
+      'Vento': 'attribute-wind',
+      'Terra': 'attribute-earth',
+      'Divino': 'attribute-divine',
+      'Carta Mágica': 'attribute-spell',
+      'Carta de Armadilha': 'attribute-trap'
+    };
+
+    // Função para atualizar o painel visual da carta
+    function updateCardView(card) {
+      if (!card) return;
+
+      // Nome da carta
+      cardName.textContent = card.nome;
+      cardName.title = card.nome;
+
+      // Remover classes anteriores de frame e adicionar a nova
+      cardFrame.className = 'ygo-card-frame';
+      
+      let typeClass = 'monster';
+      if (card.tipo_carta === 'Carta Mágica') typeClass = 'spell';
+      else if (card.tipo_carta === 'Carta de Armadilha') typeClass = 'trap';
+      else if (card.tipo_carta === 'Ficha') typeClass = 'token';
+      
+      cardFrame.classList.add(typeClass);
+
+      // Atributo
+      const rawAttr = card.tipo_carta === 'Carta Mágica' ? 'Carta Mágica' : 
+                      card.tipo_carta === 'Carta de Armadilha' ? 'Carta de Armadilha' : 
+                      card.atributo || 'Trevas';
+      
+      cardAttribute.textContent = rawAttr;
+      cardAttribute.className = 'card-attribute';
+      
+      const attrClass = ATTRIBUTE_CLASSES[rawAttr] || 'attribute-dark';
+      cardAttribute.classList.add(attrClass);
+
+      // Estrelas de Nível
+      cardLevelRow.innerHTML = '';
+      if (card.nivel && typeClass === 'monster') {
+        for (let i = 0; i < card.nivel; i++) {
+          const star = document.createElement('div');
+          star.className = 'level-star';
+          cardLevelRow.appendChild(star);
+        }
+      }
+
+      // Imagem
+      const hasImages = card.imagens && card.imagens.length > 0;
+      if (hasImages) {
+        cardImage.src = card.imagens[0];
+        cardImage.classList.remove('hidden');
+        cardImagePlaceholder.classList.add('hidden');
+      } else {
+        cardImage.src = '';
+        cardImage.classList.add('hidden');
+        cardImagePlaceholder.classList.remove('hidden');
+      }
+
+      // Galeria de imagens alternativas
+      cardGalleryRow.innerHTML = '';
+      if (card.imagens && card.imagens.length > 1) {
+        cardGalleryRow.classList.remove('hidden');
+        card.imagens.forEach((imgUrl, index) => {
+          const dot = document.createElement('div');
+          dot.className = 'gallery-dot';
+          if (index === 0) dot.classList.add('active');
+          dot.title = `Arte alternativa ${index + 1}`;
+          dot.onclick = () => {
+            cardGalleryRow.querySelectorAll('.gallery-dot').forEach(d => d.classList.remove('active'));
+            dot.classList.add('active');
+            cardImage.src = imgUrl;
+          };
+          cardGalleryRow.appendChild(dot);
+        });
+      } else {
+        cardGalleryRow.classList.add('hidden');
+      }
+
+      // Tipagem na descrição
+      cardTypes.textContent = card.tipo;
+
+      // Descrição/Efeito
+      cardDesc.textContent = card.desc;
+
+      // Ataque/Defesa (exibe apenas para monstros)
+      if (typeClass === 'monster' || typeClass === 'token') {
+        cardStatsRow.classList.remove('hidden');
+        cardAtk.textContent = card.atk !== null ? card.atk : '?';
+        cardDef.textContent = card.def !== null ? card.def : '?';
+      } else {
+        cardStatsRow.classList.add('hidden');
+      }
+    }
+
+    // Função de busca
+    async function performSearch(query) {
+      if (!query) return;
+
+      try {
+        const response = await fetch(`/api/cartas?nome=${encodeURIComponent(query)}`);
+        const data = await response.json();
+
+        if (data.resultados && data.resultados.length > 0) {
+          resultsList.innerHTML = '';
+          
+          if (data.resultados.length === 1) {
+            updateCardView(data.resultados[0]);
+            resultsList.classList.add('hidden');
+          } else {
+            // Mostrar lista de resultados para o usuário escolher
+            data.resultados.forEach(card => {
+              const item = document.createElement('div');
+              item.className = 'search-result-item';
+              item.textContent = `${card.nome} (${card.tipo_carta})`;
+              item.onclick = () => {
+                updateCardView(card);
+                resultsList.classList.add('hidden');
+                searchInput.value = card.nome;
+              };
+              resultsList.appendChild(item);
+            });
+            resultsList.classList.remove('hidden');
+            // Mostra o primeiro do resultado de imediato
+            updateCardView(data.resultados[0]);
+          }
+        } else {
+          resultsList.innerHTML = '<div class="search-result-item">Nenhuma carta encontrada.</div>';
+          resultsList.classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Erro na pesquisa:', error);
+      }
+    }
+
+    // Eventos
+    searchBtn.onclick = () => performSearch(searchInput.value);
+    
+    searchInput.onkeypress = (e) => {
+      if (e.key === 'Enter') {
+        performSearch(searchInput.value);
+      }
+    };
+
+    // Fecha a lista de resultados se clicar fora
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search-card')) {
+        resultsList.classList.add('hidden');
+      }
+    });
+
+    // Iniciar a busca inicial pelo "Mago Negro"
+    window.onload = () => {
+      performSearch('Mago Negro');
+    };
+  </script>
+</body>
+</html>

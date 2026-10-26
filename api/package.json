@@ -1,15 +1,21 @@
 {
-  "name": "@ygo-proxy/api",
-  "private": true,
-  "type": "module",
+  "name": "yugioh-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "sync": "node scripts/sync.js",
-    "dev": "node --watch src/server.js",
     "start": "node src/server.js",
-    "test": "node --test test/"
+    "setup": "node scripts/setup_database.js",
+    "test": "node --test tests/"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0",
-    "fuse.js": "^7.1.0"
+    "axios": "^1.18.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "fuse.js": "^7.4.2"
   }
 }

@@ -1,14 +1,10 @@
-import { createApp } from './app.js';
-import { config } from './config.js';
-import { CardDb } from './db.js';
+const app = require('./app');
+const { PORT, IMAGES_BASE_DIR } = require('./config');
 
-const db = await CardDb.load();
-if (db) {
-  console.log(`${db.cards.length} cartas carregadas (sincronizado em ${db.syncedAt}).`);
-} else {
-  console.warn('Base de cartas não encontrada: rode `npm run setup` na raiz do projeto.');
-}
-
-createApp(db).listen(config.port, () => {
-  console.log(`API rodando em http://localhost:${config.port}`);
+app.listen(PORT, () => {
+  console.log(`\n==================================================`);
+  console.log(`🚀 Servidor Yu-Gi-Oh! API iniciado com sucesso!`);
+  console.log(`🖥️  Local: http://localhost:${PORT}`);
+  console.log(`📁 Servindo imagens de: ${IMAGES_BASE_DIR}`);
+  console.log(`==================================================\n`);
 });

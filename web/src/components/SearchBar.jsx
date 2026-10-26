@@ -1,82 +1,109 @@
-import { useEffect, useRef, useState } from 'react';
-import { displayName, searchCards } from '../api.js';
+import React, { useState, useEffect, useRef } from 'react';
+import { Search, Loader2 } from 'lucide-react';
+import { toThumbnail } from '../utils/cardImages';
 
-export default function SearchBar({ lang, onPick }) {
+export default function SearchBar({ onSelectCard }) {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
-  const [active, setActive] = useState(0);
-  const [error, setError] = useState('');
-  const [open, setOpen] = useState(false);
-  const input = useRef(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
+  // Debounce para evitar sobrecarga de requisições na API local
   useEffect(() => {
-    const q = query.trim();
-    if (q.length < 2) {
-      setResults([]);
-      return undefined;
+    if (!query.trim()) {
+      setSuggestions([]);
+      return;
     }
-    let cancelled = false;
-    const timer = setTimeout(() => {
-      searchCards(q)
-        .then((cards) => { if (!cancelled) { setResults(cards); setActive(0); setError(''); } })
-        .catch((err) => { if (!cancelled) setError(err.message); });
-    }, 200);
-    return () => { cancelled = true; clearTimeout(timer); };
+
+    const delayDebounceFn = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/cartas?nome=${encodeURIComponent(query)}&limit=10`);
+        const data = await response.json();
+        setSuggestions(data.resultados || []);
+        setShowDropdown(true);
+      } catch (error) {
+        console.error('Erro ao buscar sugestões:', error);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
   }, [query]);
 
-  const pick = (card) => {
-    onPick(card);
-    setQuery('');
-    setResults([]);
-    input.current.focus();
-  };
+  // Fecha o dropdown se clicar fora do componente
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
-  const onKeyDown = (e) => {
-    if (!results.length) return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); setActive((a) => (a + 1) % results.length); }
-    if (e.key === 'ArrowUp') { e.preventDefault(); setActive((a) => (a - 1 + results.length) % results.length); }
-    if (e.key === 'Enter') { e.preventDefault(); pick(results[active]); }
-    if (e.key === 'Escape') setOpen(false);
+  const handleSelect = (card) => {
+    onSelectCard(card);
+    setQuery('');
+    setSuggestions([]);
+    setShowDropdown(false);
   };
 
   return (
-    <div className="search">
-      <input
-        ref={input}
-        type="search"
-        placeholder="Buscar carta em português ou inglês (ex.: Mago Negro, Ash Blossom)"
-        value={query}
-        onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
-        onKeyDown={onKeyDown}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setTimeout(() => setOpen(false), 150)}
-        autoFocus
-      />
-      {error && <p className="notice error">{error}</p>}
-      {open && results.length > 0 && (
-        <ul className="results">
-          {results.map((card, i) => {
-            const name = displayName(card, lang);
+    <div className="search-bar-container" ref={dropdownRef}>
+      <label className="input-label">Buscar Carta (Nome ou ID)</label>
+      <div className="search-input-wrapper">
+        <Search className="search-icon" size={18} />
+        <input
+          type="text"
+          placeholder="Ex: Mago Negro, 55144522..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => query.trim() && setShowDropdown(true)}
+          className="search-input"
+        />
+        {loading && <Loader2 className="loading-spinner" size={18} />}
+      </div>
+
+      {showDropdown && suggestions.length > 0 && (
+        <ul className="suggestions-dropdown">
+          {suggestions.map((card) => {
+            const hasImage = card.imagens && card.imagens.length > 0;
+            const typeColor = card.tipo_carta === 'Carta Mágica' ? '#1d9e74' : 
+                              card.tipo_carta === 'Carta de Armadilha' ? '#bc2c72' : '#d37118';
+
             return (
-              <li
-                key={card.id}
-                className={i === active ? 'active' : ''}
-                onMouseEnter={() => setActive(i)}
-                onMouseDown={(e) => { e.preventDefault(); pick(card); }}
-              >
-                <img src={`/img/ygoprodeck/small/${card.arts[0]}.jpg`} alt="" loading="lazy" />
-                <div>
-                  <strong>{name}</strong>
-                  <small>
-                    {name !== card.en ? card.en : card.pt || ''}
-                    {card.arts.length > 1 && ` · ${card.arts.length} artes`}
-                  </small>
+              <li key={card.id} onClick={() => handleSelect(card)} className="suggestion-item">
+                <div className="suggestion-thumbnail">
+                  {hasImage ? (
+                    <img src={toThumbnail(card.imagens[0])} alt={card.nome} />
+                  ) : (
+                    <div className="no-image-thumb">?</div>
+                  )}
                 </div>
-                <span className={`frame frame-${card.frame}`}>{card.type}</span>
+                <div className="suggestion-info">
+                  <span className="suggestion-name">
+                    {card.nome} <span className="suggestion-id-tag">(ID: {card.id})</span>
+                  </span>
+                  <div className="suggestion-meta">
+                    <span className="suggestion-en-name">{card.nome_en}</span>
+                    <span className="suggestion-type" style={{ color: typeColor }}>
+                      {card.tipo}
+                    </span>
+                  </div>
+                </div>
               </li>
             );
           })}
         </ul>
+      )}
+
+      {showDropdown && query.trim() && !loading && suggestions.length === 0 && (
+        <div className="suggestions-dropdown no-results">
+          Nenhuma carta correspondente encontrada.
+        </div>
       )}
     </div>
   );

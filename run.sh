@@ -20,7 +20,8 @@ if [ ! -d node_modules ]; then
   npm install
 fi
 
-if [ ! -f api/data/cards.json ] || [ "$MODE" = "atualizar" ]; then
+# A base precisa ter o campo "artes" (bases antigas, só com o acervo local, não têm)
+if ! grep -q '"artes"' api/data/cards_pt.json 2>/dev/null || [ "$MODE" = "atualizar" ]; then
   echo "==> Baixando a base de cartas..."
   npm run setup
 fi
