@@ -1,4 +1,4 @@
-# Yu-Gi-Oh! Proxy Maker
+# Yu-Gi-Oh! Proxies
 
 Versão do [Proxy Maker Brasil](https://www.proxymakerbrasil.com/) (de [Ruan Cardoso](https://github.com/Ruancard)) com cartas em **português, inglês (TCG) e japonês (OCG)** e todas as variantes de arte.
 
@@ -42,6 +42,20 @@ A maioria dos scans tem de 700 a 1500 px de largura (300 a 600 dpi no tamanho re
 **Versos.** São 9 modelos: os 6 do site original (em `api/imagens/verso/`, baixados do proxymakerbrasil.com, já que não estão no repositório do autor) e os oficiais TCG, OCG e coreano (Yugipedia). Para adicionar versos próprios, coloque as imagens (`.webp`, `.png` ou `.jpg`) em `<IMAGES_BASE_DIR>/verso/` (por padrão `api/imagens/verso/`).
 
 **Rodapé.** A seção "Apoie o Projeto" (links e chaves de doação do autor original) foi removida; fica só a linha de créditos.
+
+**Identidade visual própria ("Duel Disk").** Todo o visual foi refeito para não se confundir com o original; as funcionalidades são as mesmas.
+
+| Elemento | Antes (original) | Agora |
+|---|---|---|
+| Nome | Proxy Maker Brasil | Yu-Gi-Oh! Proxies |
+| Cores | Roxo + dourado | Marinho `#060a14` + ciano `#22d3ee` (apoio índigo `#6366f1`) |
+| Fontes | Outfit / Plus Jakarta Sans (não carregadas) | Rajdhani (títulos) + Inter (texto), via Google Fonts |
+| Formas | Cantos arredondados, brilho dourado | Cantos retos, botões chanfrados, linhas de HUD, grade de fundo na prévia |
+| Logo | Ícone de brilho (lucide) | Hexágono de duel disk com carta (`web/src/components/Logo.jsx`, `public/favicon.svg`) |
+
+**Layout que aproveita a tela.** Em telas largas (acima de 1280 px) são 3 colunas: cartas à esquerda (a lista ocupa a altura toda), prévia no centro e ajustes à direita, com o botão de imprimir sempre visível. A prévia calcula o zoom da folha para ocupar a altura livre (`web/src/utils/useSheetZoom.js`) e, quando sobra largura, mostra as páginas lado a lado (por exemplo, frente e verso). Entre 1024 e 1280 px, cartas e ajustes ficam empilhados à esquerda e a prévia fica fixa à direita; abaixo de 1024 px tudo empilha. O zoom vale só na tela: a impressão continua no tamanho real.
+
+As cores ficam em variáveis no topo de `web/src/index.css`, para facilitar ajustes. A página de documentação da API (`/api`) usa a mesma paleta. O `robots.txt` não aponta mais para o sitemap do domínio original, e o `sitemap.xml` foi removido.
 
 ### Mudanças técnicas
 

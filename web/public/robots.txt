@@ -1,5 +1,2 @@
 User-agent: *
 Allow: /
-
-# Caminho para o mapa do site
-Sitemap: https://proxymakerbrasil.com/sitemap.xml

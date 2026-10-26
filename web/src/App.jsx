@@ -6,7 +6,7 @@ import CardPreview from './components/CardPreview';
 import ArtworkSelectionModal from './components/ArtworkSelectionModal';
 import { calculatePrintLayout } from './utils/printMath';
 import { getItemImage, getItemKey } from './utils/cardImages';
-import { Sparkles } from 'lucide-react';
+import Logo from './components/Logo';
 
 export default function App() {
   // Lista de proxies a serem impressas
@@ -191,15 +191,15 @@ export default function App() {
       {/* Navbar egípcia/anime */}
       <header className="navbar no-print">
         <div className="nav-brand">
-          <Sparkles className="logo-sparkle" size={24} />
-          <h1>Proxy Maker Brasil</h1>
+          <Logo className="logo-mark" size={32} />
+          <h1>Yu-Gi-Oh! <span>Proxies</span></h1>
         </div>
-        <p className="nav-subtitle">Yu-Gi-Oh!</p>
+        <p className="nav-subtitle">PT · EN · OCG</p>
       </header>
 
       <div className="layout-body">
-        {/* Painel de Controles (Esquerda) */}
-        <aside className="control-sidebar no-print">
+        {/* Cartas (Esquerda): busca e lista ocupando a altura toda */}
+        <aside className="control-sidebar cards-sidebar no-print">
           <div className="sidebar-scrollable">
             <SearchBar onSelectCard={handleSelectCard} />
             <CardList
@@ -208,24 +208,15 @@ export default function App() {
               onDeleteCard={handleDeleteCard}
               onEditCard={setEditingItem}
             />
-            <ControlPanel
-              config={config}
-              onUpdateConfig={handleUpdateConfig}
-              onClearList={handleClearList}
-              onResetConfig={handleResetConfig}
-              onPrint={handlePrint}
-              hasCards={addedCards.length > 0}
-              availableBacks={availableBacks}
-            />
             {/* Rodapé */}
             <footer className="support-footer">
               <div className="footer-divider"></div>
-              <p className="footer-credits">Yu-Gi-Oh! Proxy Maker Português &copy; {new Date().getFullYear()}</p>
+              <p className="footer-credits">Yu-Gi-Oh! Proxies &copy; {new Date().getFullYear()}</p>
             </footer>
           </div>
         </aside>
 
-        {/* Visualização de Impressão (Direita) */}
+        {/* Visualização de Impressão (Centro) */}
         <main className="preview-main">
           <CardPreview
             layoutResult={layoutResult}
@@ -235,6 +226,21 @@ export default function App() {
             selectedBackUrl={config.selectedBackUrl}
           />
         </main>
+
+        {/* Ajustes de Impressão (Direita) */}
+        <aside className="control-sidebar settings-sidebar no-print">
+          <div className="sidebar-scrollable">
+            <ControlPanel
+              config={config}
+              onUpdateConfig={handleUpdateConfig}
+              onClearList={handleClearList}
+              onResetConfig={handleResetConfig}
+              onPrint={handlePrint}
+              hasCards={addedCards.length > 0}
+              availableBacks={availableBacks}
+            />
+          </div>
+        </aside>
       </div>
 
       {/* Modal de Seleção de Arte e Quantidade */}

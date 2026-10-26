@@ -123,7 +123,7 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
           <div className="control-group" style={{ marginTop: '0.6rem', paddingLeft: '28px' }}>
             {/* Rótulo em cima e miniaturas quebrando linha: cabem os versos locais + os oficiais */}
             <div className="back-selector-horizontal-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '8px' }}>
-              <label className="input-label" style={{ fontSize: '0.72rem', color: '#d4af37', marginBottom: '0' }}>Modelo do Verso</label>
+              <label className="input-label" style={{ marginBottom: '0' }}>Modelo do Verso</label>
               <div className="back-thumbnails-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {availableBacks.map((url, idx) => {
                   const isSelected = config.selectedBackUrl === url || (!config.selectedBackUrl && idx === 0);

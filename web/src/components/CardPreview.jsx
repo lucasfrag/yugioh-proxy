@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { getItemImage } from '../utils/cardImages';
+import { useSheetZoom } from '../utils/useSheetZoom';
 
 // URL padrão para o verso das cartas de Yu-Gi-Oh!
 const CARD_BACK_IMAGE_URL = '/imagens/verso-remoto/Back-EN.png';
 
 export default function CardPreview({ layoutResult, borderSize, sheetSize, useSafetyMargin, selectedBackUrl }) {
   const { pages } = layoutResult;
+  const areaRef = useRef(null);
+  const hasPages = Boolean(pages && pages.length > 0);
+  const zoom = useSheetZoom(areaRef, sheetSize, hasPages);
 
-  if (!pages || pages.length === 0) {
+  if (!hasPages) {
     return (
       <div className="preview-placeholder">
         <div className="placeholder-content">
@@ -19,12 +23,12 @@ export default function CardPreview({ layoutResult, borderSize, sheetSize, useSa
   }
 
   return (
-    <div className="print-preview-area">
+    <div className="print-preview-area" ref={areaRef}>
       <div className="preview-section-title no-print">
         Visualização de Impressão ({pages.length} {pages.length === 1 ? 'página' : 'páginas'})
       </div>
 
-      <div className="sheets-container">
+      <div className="sheets-container" style={{ '--sheet-zoom': zoom }}>
         {pages.map((page) => {
           const { gridConfig, cards, isBack, pageNumber } = page;
           
@@ -73,7 +77,7 @@ export default function CardPreview({ layoutResult, borderSize, sheetSize, useSa
                     left: '10mm',
                     right: '10mm',
                     bottom: '10mm',
-                    border: '1px dashed rgba(212, 175, 55, 0.25)',
+                    border: '1px dashed rgba(34, 211, 238, 0.35)',
                     pointerEvents: 'none',
                     borderRadius: '2px',
                     boxSizing: 'border-box'
