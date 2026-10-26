@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Palette, Check } from 'lucide-react';
 import { THEMES, applyTheme, loadTheme } from '../utils/themes';
+import { useI18n } from '../utils/i18n';
 
 export default function ThemeSwitcher() {
+  const { t } = useI18n();
   const [tema, setTema] = useState(loadTheme);
   const [aberto, setAberto] = useState(false);
   const ref = useRef(null);
@@ -36,31 +38,31 @@ export default function ThemeSwitcher() {
         onClick={() => setAberto((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={aberto}
-        title="Trocar tema"
+        title={t('nav.theme')}
       >
         <Palette size={16} />
-        <span>{atual.nome}</span>
+        <span>{t(`theme.${atual.id}.name`)}</span>
       </button>
 
       {aberto && (
         <div className="theme-menu" role="menu">
-          {THEMES.map((t) => (
+          {THEMES.map((tema_) => (
             <button
-              key={t.id}
+              key={tema_.id}
               type="button"
               role="menuitemradio"
-              aria-checked={t.id === tema}
-              className={`theme-option ${t.id === tema ? 'active' : ''}`}
-              onClick={() => escolher(t.id)}
+              aria-checked={tema_.id === tema}
+              className={`theme-option ${tema_.id === tema ? 'active' : ''}`}
+              onClick={() => escolher(tema_.id)}
             >
               <span className="theme-swatches" aria-hidden="true">
-                {t.cores.map((cor) => <span key={cor} style={{ background: cor }} />)}
+                {tema_.cores.map((cor) => <span key={cor} style={{ background: cor }} />)}
               </span>
               <span className="theme-option-text">
-                <strong>{t.nome}</strong>
-                <small>{t.descricao}</small>
+                <strong>{t(`theme.${tema_.id}.name`)}</strong>
+                <small>{t(`theme.${tema_.id}.desc`)}</small>
               </span>
-              {t.id === tema && <Check size={16} className="theme-check" />}
+              {tema_.id === tema && <Check size={16} className="theme-check" />}
             </button>
           ))}
         </div>

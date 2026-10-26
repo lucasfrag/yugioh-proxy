@@ -1,12 +1,14 @@
 import React, { useRef } from 'react';
 import { getItemImage } from '../utils/cardImages';
 import { useSheetZoom } from '../utils/useSheetZoom';
+import { cardNames, useI18n } from '../utils/i18n';
 
 // URL padrão para o verso das cartas de Yu-Gi-Oh!
 const CARD_BACK_IMAGE_URL = '/imagens/verso-remoto/Back-EN.png';
 
 export default function CardPreview({ layoutResult, borderSize, sheetSize, useSafetyMargin, selectedBackUrl }) {
   const { pages } = layoutResult;
+  const { lang, t, tn } = useI18n();
   const areaRef = useRef(null);
   const hasPages = Boolean(pages && pages.length > 0);
   const zoom = useSheetZoom(areaRef, sheetSize, hasPages);
@@ -15,8 +17,8 @@ export default function CardPreview({ layoutResult, borderSize, sheetSize, useSa
     return (
       <div className="preview-placeholder">
         <div className="placeholder-content">
-          <h3>Visualização de Impressão</h3>
-          <p>Adicione cartas à lista para visualizar como elas ficarão distribuídas nas folhas.</p>
+          <h3>{t('preview.title')}</h3>
+          <p>{t('preview.empty')}</p>
         </div>
       </div>
     );
@@ -25,7 +27,7 @@ export default function CardPreview({ layoutResult, borderSize, sheetSize, useSa
   return (
     <div className="print-preview-area" ref={areaRef}>
       <div className="preview-section-title no-print">
-        Visualização de Impressão ({pages.length} {pages.length === 1 ? 'página' : 'páginas'})
+        {t('preview.title')} ({tn('preview.pages', pages.length)})
       </div>
 
       <div className="sheets-container" style={{ '--sheet-zoom': zoom }}>
@@ -87,7 +89,7 @@ export default function CardPreview({ layoutResult, borderSize, sheetSize, useSa
 
               {/* Indicador de página visível na tela, mas invisível na impressão */}
               <div className="sheet-page-indicator no-print">
-                Página {pageNumber} - {isBack ? 'Verso (Fundo das Cartas - Espelhado)' : 'Frente (Cartas)'}
+                {t(isBack ? 'preview.back' : 'preview.front', { n: pageNumber })}
               </div>
 
               <div style={gridStyle} className="sheet-grid">
@@ -113,7 +115,7 @@ export default function CardPreview({ layoutResult, borderSize, sheetSize, useSa
                       {imageUrl ? (
                         <img 
                           src={imageUrl} 
-                          alt={isBack ? "Verso Yu-Gi-Oh" : card.nome} 
+                          alt={isBack ? t('preview.backAlt') : cardNames(card, lang).principal} 
                           className="card-image-render"
                         />
                       ) : (

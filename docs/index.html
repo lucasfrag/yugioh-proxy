@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yu-Gi-Oh! Proxies — Build and print Yu-Gi-Oh! proxies</title>
+  <meta name="description" content="Build and print Yu-Gi-Oh! proxies: 14,600+ cards, every alternate artwork, in English or Portuguese, with five themes and print-accurate sheets." />
+  <meta name="theme-color" content="#060a14" />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Yu-Gi-Oh! Proxies" />
+  <meta property="og:description" content="Build and print Yu-Gi-Oh! proxies — every card, every artwork, in English or Portuguese." />
+  <meta property="og:url" content="https://lucasfrag.github.io/yugioh-proxy/" />
+  <meta property="og:image" content="https://lucasfrag.github.io/yugioh-proxy/assets/social-preview.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #060a14;
+      --bg-2: #0a1120;
+      --panel: #0f1829;
+      --line: rgba(34, 211, 238, 0.14);
+      --line-strong: rgba(34, 211, 238, 0.45);
+      --line-neutral: rgba(148, 163, 184, 0.14);
+      --accent: #22d3ee;
+      --accent-strong: #67e8f9;
+      --accent-dim: rgba(34, 211, 238, 0.1);
+      --accent-2: #6366f1;
+      --text: #cbd5e1;
+      --text-strong: #f8fafc;
+      --text-muted: #8394b0;
+      --font-display: 'Rajdhani', 'Inter', sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --chamfer: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background:
+        radial-gradient(ellipse 80% 50% at 70% 0%, rgba(34, 211, 238, 0.12), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 0% 30%, rgba(99, 102, 241, 0.1), transparent 60%),
+        linear-gradient(rgba(34, 211, 238, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.035) 1px, transparent 1px),
+        var(--bg);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px, auto;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); }
+    img { max-width: 100%; height: auto; display: block; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    .wrap { width: min(1120px, 100% - 32px); margin-inline: auto; }
+
+    /* Navbar */
+    header.top {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(6, 10, 20, 0.82);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .brand img { width: 34px; height: 34px; }
+    .brand span { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-strong); white-space: nowrap; }
+    .brand b { color: var(--accent); font-weight: 700; }
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+    .lang { display: flex; border: 1px solid var(--line-neutral); border-radius: 2px; overflow: hidden; }
+    .lang button { background: none; border: 0; color: var(--text-muted); font: 700 0.85rem var(--font-display); letter-spacing: 1px; padding: 6px 12px; cursor: pointer; }
+    .lang button + button { border-left: 1px solid var(--line-neutral); }
+    .lang button[aria-pressed="true"] { background: var(--accent); color: #04121a; }
+    .gh { display: inline-flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none; font: 600 0.9rem var(--font-display); letter-spacing: 1px; text-transform: uppercase; border: 1px solid var(--line-neutral); padding: 6px 12px; border-radius: 2px; }
+    .gh:hover { border-color: var(--accent); color: var(--accent); }
+    .gh svg { width: 18px; height: 18px; fill: currentColor; }
+
+    /* Hero */
+    .hero { padding: 72px 0 40px; text-align: center; }
+    .hero .logo { width: 88px; height: 88px; margin: 0 auto 22px; filter: drop-shadow(0 0 18px rgba(34, 211, 238, 0.45)); }
+    .hero h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.6rem, 7vw, 4.6rem); letter-spacing: 4px; line-height: 1; text-transform: uppercase; color: var(--text-strong); }
+    .hero h1 b { color: var(--accent); }
+    .hero p.tag { max-width: 720px; margin: 22px auto 0; font-size: clamp(1.05rem, 2.2vw, 1.3rem); color: #b6c3d8; }
+    .hero p.tag strong { color: var(--text-strong); font-weight: 600; }
+    .cta { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 32px; }
+    .btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; font: 700 1rem var(--font-display); letter-spacing: 2px; text-transform: uppercase; text-decoration: none; }
+    .btn.primary { background: var(--accent); color: #04121a; clip-path: var(--chamfer); }
+    .btn.primary:hover { background: var(--accent-strong); }
+    .btn.ghost { border: 1px solid var(--line-strong); color: var(--accent); }
+    .btn.ghost:hover { background: var(--accent-dim); }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 30px; }
+    .chips span { font: 700 0.85rem var(--font-display); letter-spacing: 2px; text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--line-strong); color: var(--accent-strong); background: var(--accent-dim); }
+
+    .shot { margin-top: 48px; border: 1px solid var(--line-strong); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), 0 0 50px rgba(34, 211, 238, 0.1); }
+
+    /* Seções */
+    section { padding: 72px 0; }
+    section + section { border-top: 1px solid var(--line); }
+    .eyebrow { font: 700 0.85rem var(--font-display); letter-spacing: 3px; text-transform: uppercase; color: var(--accent); }
+    h2 { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.9rem, 4vw, 2.6rem); letter-spacing: 2px; text-transform: uppercase; color: var(--text-strong); line-height: 1.1; margin-top: 8px; }
+    .lead { max-width: 760px; margin-top: 14px; color: var(--text); }
+
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-top: 36px; }
+    .feature { position: relative; background: var(--panel); border: 1px solid var(--line-neutral); border-left: 2px solid var(--accent); padding: 22px; }
+    .feature h3 { font: 700 1.2rem var(--font-display); letter-spacing: 1px; text-transform: uppercase; color: var(--text-strong); }
+    .feature p { margin-top: 8px; font-size: 0.95rem; color: var(--text-muted); }
+    .feature .ico { width: 28px; height: 28px; color: var(--accent); margin-bottom: 12px; }
+
+    .split { display: grid; grid-template-columns: 1fr 1.35fr; gap: 40px; align-items: center; }
+    .split.reverse { grid-template-columns: 1.35fr 1fr; }
+    .split.reverse .copy { order: 2; }
+    .split img { border: 1px solid var(--line-strong); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55); }
+    .copy ul { margin-top: 16px; padding-left: 0; list-style: none; }
+    .copy li { padding-left: 22px; position: relative; margin-top: 8px; }
+    .copy li::before { content: ""; position: absolute; left: 4px; top: 0.65em; width: 7px; height: 7px; background: var(--accent); transform: rotate(45deg); }
+
+    .wide img { margin-top: 32px; border: 1px solid var(--line-neutral); }
+
+    pre { margin-top: 24px; background: #040811; border: 1px solid var(--line-strong); padding: 20px 22px; overflow-x: auto; font: 0.92rem/1.7 'JetBrains Mono', ui-monospace, monospace; color: #e2e8f0; }
+    pre .c { color: var(--text-muted); }
+    pre .p { color: var(--accent); user-select: none; }
+    .note { margin-top: 14px; font-size: 0.92rem; color: var(--text-muted); }
+
+    .credits { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-top: 30px; }
+    .credit { background: var(--panel); border: 1px solid var(--line-neutral); padding: 20px; }
+    .credit h3 { font: 700 1.1rem var(--font-display); letter-spacing: 1px; text-transform: uppercase; color: var(--text-strong); }
+    .credit p { margin-top: 6px; font-size: 0.93rem; color: var(--text-muted); }
+
+    footer { padding: 36px 0 48px; border-top: 1px solid var(--line); color: var(--text-muted); font-size: 0.88rem; text-align: center; }
+
+    @media (max-width: 860px) {
+      .split, .split.reverse { grid-template-columns: 1fr; }
+      .split.reverse .copy { order: 0; }
+      .gh span { display: none; }
+      .brand span { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="#"><img src="assets/logo.svg" alt="" /><span>Yu-Gi-Oh! <b>Proxies</b></span></a>
+      <div class="top-actions">
+        <div class="lang" role="group" aria-label="Language">
+          <button type="button" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-lang="pt" aria-pressed="false">PT</button>
+        </div>
+        <a class="gh" href="https://github.com/lucasfrag/yugioh-proxy">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero wrap">
+      <img class="logo" src="assets/logo.svg" alt="Yu-Gi-Oh! Proxies logo" />
+      <h1>Yu-Gi-Oh! <b>Proxies</b></h1>
+      <p class="tag" data-i18n-html="hero.tag"></p>
+      <div class="cta">
+        <a class="btn primary" href="#start" data-i18n="hero.start"></a>
+        <a class="btn ghost" href="https://github.com/lucasfrag/yugioh-proxy" data-i18n="hero.source"></a>
+      </div>
+      <div class="chips"><span data-i18n="chip.cards"></span><span data-i18n="chip.arts"></span><span data-i18n="chip.langs"></span><span data-i18n="chip.themes"></span></div>
+      <img class="shot" data-src="main" alt="" width="1600" height="900" />
+    </div>
+
+    <section id="features">
+      <div class="wrap">
+        <p class="eyebrow" data-i18n="features.eyebrow"></p>
+        <h2 data-i18n="features.title"></h2>
+        <div class="features">
+          <article class="feature">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+            <h3 data-i18n="f1.t"></h3><p data-i18n="f1.d"></p>
+          </article>
+          <article class="feature">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="8" height="12" rx="1"/><rect x="13" y="8" width="8" height="12" rx="1"/></svg>
+            <h3 data-i18n="f2.t"></h3><p data-i18n="f2.d"></p>
+          </article>
+          <article class="feature">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h9M8.5 3v2M6 5c1 4 4 7 7 8M11 5c-1 4-4 7-7 8"/><path d="m13 21 4-9 4 9M14.5 18h5"/></svg>
+            <h3 data-i18n="f3.t"></h3><p data-i18n="f3.d"></p>
+          </article>
+          <article class="feature">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="1"/><path d="M6 14h12v7H6z"/></svg>
+            <h3 data-i18n="f4.t"></h3><p data-i18n="f4.d"></p>
+          </article>
+          <article class="feature">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18M7 9h.01M9 6h.01M15 6h.01M17 9h.01"/></svg>
+            <h3 data-i18n="f5.t"></h3><p data-i18n="f5.d"></p>
+          </article>
+          <article class="feature">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h10M4 17h7"/><path d="m16 15 2 2 4-4"/></svg>
+            <h3 data-i18n="f6.t"></h3><p data-i18n="f6.d"></p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap split">
+        <div class="copy">
+          <p class="eyebrow" data-i18n="art.eyebrow"></p>
+          <h2 data-i18n="art.title"></h2>
+          <p class="lead" data-i18n="art.lead"></p>
+          <ul><li data-i18n="art.l1"></li><li data-i18n="art.l2"></li><li data-i18n="art.l3"></li></ul>
+        </div>
+        <img data-src="modal" alt="" width="1600" height="900" loading="lazy" />
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap wide">
+        <p class="eyebrow" data-i18n="themes.eyebrow"></p>
+        <h2 data-i18n="themes.title"></h2>
+        <p class="lead" data-i18n="themes.lead"></p>
+        <img data-src="themes" alt="" width="1600" height="786" loading="lazy" />
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap split reverse">
+        <img data-src="print" alt="" width="1600" height="937" loading="lazy" />
+        <div class="copy">
+          <p class="eyebrow" data-i18n="print.eyebrow"></p>
+          <h2 data-i18n="print.title"></h2>
+          <p class="lead" data-i18n="print.lead"></p>
+          <ul><li data-i18n="print.l1"></li><li data-i18n="print.l2"></li><li data-i18n="print.l3"></li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="start">
+      <div class="wrap">
+        <p class="eyebrow" data-i18n="start.eyebrow"></p>
+        <h2 data-i18n="start.title"></h2>
+        <p class="lead" data-i18n-html="start.lead"></p>
+<pre><code><span class="p">$ </span>git clone https://github.com/lucasfrag/yugioh-proxy.git
+<span class="p">$ </span>cd yugioh-proxy
+<span class="p">$ </span>./run.sh            <span class="c" data-i18n="start.c1"></span>
+<span class="p">$ </span>./run.sh cartas-pt  <span class="c" data-i18n="start.c2"></span>
+<span class="p">$ </span>./run.sh dev        <span class="c" data-i18n="start.c3"></span></code></pre>
+        <p class="note" data-i18n-html="start.note"></p>
+      </div>
+    </section>
+
+    <section id="credits">
+      <div class="wrap">
+        <p class="eyebrow" data-i18n="credits.eyebrow"></p>
+        <h2 data-i18n="credits.title"></h2>
+        <div class="credits">
+          <div class="credit"><h3>Emula Animes</h3><p data-i18n-html="credits.emula"></p></div>
+          <div class="credit"><h3>Proxy Maker Brasil</h3><p data-i18n-html="credits.ruan"></p></div>
+          <div class="credit"><h3>YGOPRODeck</h3><p data-i18n-html="credits.ygopro"></p></div>
+          <div class="credit"><h3>Yugipedia</h3><p data-i18n-html="credits.yugipedia"></p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap" data-i18n="footer"></div>
+  </footer>
+
+  <script>
+    const T = {
+      en: {
+        title: 'Yu-Gi-Oh! Proxies — Build and print Yu-Gi-Oh! proxies',
+        'hero.tag': 'Build and print <strong>Yu-Gi-Oh! proxies</strong> in seconds — every card, every alternate artwork, in <strong>English</strong> or <strong>Portuguese</strong>, laid out on print-accurate sheets.',
+        'hero.start': 'Get started',
+        'hero.source': 'View source',
+        'chip.cards': '14,600+ cards', 'chip.arts': 'Alt artworks', 'chip.langs': 'EN · PT-BR', 'chip.themes': '5 themes',
+        'features.eyebrow': 'Features', 'features.title': 'Everything you need to proxy a deck',
+        'f1.t': 'Search every card', 'f1.d': 'Fuzzy search across 14,600+ cards by English name, Portuguese name or card ID — typos welcome.',
+        'f2.t': 'Every artwork', 'f2.d': 'Pick any alternate artwork. English art comes from YGOPRODeck at 813 × 1185 px (~350 dpi).',
+        'f3.t': 'English or Portuguese', 'f3.d': 'The interface, card names and types switch between English and Brazilian Portuguese — plus 1,900+ HD Portuguese cards.',
+        'f4.t': 'Print-accurate', 'f4.d': 'Official 59 × 86 mm size, A2–A5, Letter, Legal and Tabloid sheets, spacing, cut borders and safety margins.',
+        'f5.t': 'Five themes', 'f5.d': 'Duel Disk, Millennium, Duel Table, Binder and the Original look — your choice is remembered.',
+        'f6.t': 'Card backs', 'f6.d': 'Interleave mirrored back pages for double-sided printing, with up to 13 card back designs.',
+        'art.eyebrow': 'Artwork picker', 'art.title': 'Choose the art and the language',
+        'art.lead': 'Click a card and a picker opens with every artwork available, grouped by language. Pick the art, set the quantity, done.',
+        'art.l1': 'All alternate artworks, side by side', 'art.l2': 'Portuguese and English versions in separate tabs', 'art.l3': 'Change the art of any card already in your list',
+        'themes.eyebrow': 'Themes', 'themes.title': 'Five looks, one click',
+        'themes.lead': 'Switch themes from the palette button in the navbar. Printing is never affected — sheets are always clean white paper.',
+        'print.eyebrow': 'Printing', 'print.title': 'Real size, ready to cut',
+        'print.lead': 'The preview is the print: what you see on screen is exactly what comes out of the printer, or the PDF.',
+        'print.l1': 'Official card size, adjustable from 70% to 130%', 'print.l2': 'Optional mirrored back pages for double-sided prints', 'print.l3': 'Cut borders and printer safety margin',
+        'start.eyebrow': 'Quick start', 'start.title': 'Run it on your machine',
+        'start.lead': 'You need <strong>Node.js 20.9+</strong> (the project ships an <code>.nvmrc</code> for <a href="https://github.com/nvm-sh/nvm">nvm</a>). One script installs everything, builds the site and opens it at <code>http://localhost:3000</code>.',
+        'start.c1': '# install, build and start', 'start.c2': '# download the Portuguese HD cards (optional)', 'start.c3': '# development mode with hot reload',
+        'start.note': 'There is no hosted version yet: the app runs locally because it caches card images on your machine instead of hotlinking them. Portuguese cards are downloaded straight from their creator’s public folder — this project hosts none of them.',
+        'credits.eyebrow': 'Credits', 'credits.title': 'Built on the work of others',
+        'credits.emula': 'Created the Portuguese HD cards and shares them for free at <a href="https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html">Cartas Caseiras</a>.',
+        'credits.ruan': 'The original proxy maker by <a href="https://github.com/Ruancard">Ruan Cardoso</a>, which this project builds upon.',
+        'credits.ygopro': 'Card data and English artwork, via the <a href="https://ygoprodeck.com/api-guide/">YGOPRODeck API</a>.',
+        'credits.yugipedia': 'Official TCG, OCG and Korean card back images, from <a href="https://yugipedia.com">Yugipedia</a>.',
+        footer: 'Yu-Gi-Oh! is a trademark of Konami. This is an unofficial fan project, not affiliated with Konami. Proxies are for personal and casual play only — not for sanctioned tournaments or sale.'
+      },
+      pt: {
+        title: 'Yu-Gi-Oh! Proxies — Monte e imprima proxies de Yu-Gi-Oh!',
+        'hero.tag': 'Monte e imprima <strong>proxies de Yu-Gi-Oh!</strong> em segundos — todas as cartas, todas as artes alternativas, em <strong>português</strong> ou <strong>inglês</strong>, em folhas no tamanho exato de impressão.',
+        'hero.start': 'Começar',
+        'hero.source': 'Ver código',
+        'chip.cards': '14.600+ cartas', 'chip.arts': 'Artes alternativas', 'chip.langs': 'PT-BR · EN', 'chip.themes': '5 temas',
+        'features.eyebrow': 'Recursos', 'features.title': 'Tudo para montar as proxies do seu deck',
+        'f1.t': 'Busca em todas as cartas', 'f1.d': 'Busca tolerante a erros em 14.600+ cartas, pelo nome em português, em inglês ou pelo ID.',
+        'f2.t': 'Todas as artes', 'f2.d': 'Escolha qualquer arte alternativa. As artes em inglês vêm do YGOPRODeck em 813 × 1185 px (~350 dpi).',
+        'f3.t': 'Português ou inglês', 'f3.d': 'A interface, os nomes e os tipos das cartas mudam entre português e inglês — e 1.900+ cartas em português em HD.',
+        'f4.t': 'Tamanho real', 'f4.d': 'Tamanho oficial de 59 × 86 mm, folhas de A2 a A5, Carta, Ofício e Tabloide, espaçamento, borda de corte e margem de segurança.',
+        'f5.t': 'Cinco temas', 'f5.d': 'Duel Disk, Milênio, Mesa de Duelo, Fichário e o visual Original — o site lembra a sua escolha.',
+        'f6.t': 'Versos', 'f6.d': 'Páginas de verso espelhadas para impressão frente e verso, com até 13 modelos de verso.',
+        'art.eyebrow': 'Seletor de artes', 'art.title': 'Escolha a arte e o idioma',
+        'art.lead': 'Ao clicar numa carta, abre um seletor com todas as artes disponíveis, separadas por idioma. Escolha a arte, a quantidade, e pronto.',
+        'art.l1': 'Todas as artes alternativas lado a lado', 'art.l2': 'Versões em português e em inglês em abas separadas', 'art.l3': 'Troque a arte de qualquer carta que já está na lista',
+        'themes.eyebrow': 'Temas', 'themes.title': 'Cinco visuais, um clique',
+        'themes.lead': 'Troque de tema pelo botão de paleta na navbar. A impressão nunca muda — as folhas saem sempre em papel branco.',
+        'print.eyebrow': 'Impressão', 'print.title': 'Tamanho real, pronto para recortar',
+        'print.lead': 'A prévia é a impressão: o que aparece na tela é exatamente o que sai na impressora, ou no PDF.',
+        'print.l1': 'Tamanho oficial da carta, ajustável de 70% a 130%', 'print.l2': 'Páginas de verso espelhadas opcionais, para frente e verso', 'print.l3': 'Borda de corte e margem de segurança da impressora',
+        'start.eyebrow': 'Como rodar', 'start.title': 'Rode na sua máquina',
+        'start.lead': 'Você precisa do <strong>Node.js 20.9+</strong> (o projeto traz um <code>.nvmrc</code> para o <a href="https://github.com/nvm-sh/nvm">nvm</a>). Um script instala tudo, gera o site e abre em <code>http://localhost:3000</code>.',
+        'start.c1': '# instala, gera o site e sobe', 'start.c2': '# baixa as cartas em português em HD (opcional)', 'start.c3': '# modo desenvolvimento, recarrega ao editar',
+        'start.note': 'Ainda não há uma versão hospedada: o app roda localmente porque guarda as imagens das cartas na sua máquina em vez de puxá-las de outros sites. As cartas em português são baixadas direto da pasta pública do criador — este projeto não hospeda nenhuma delas.',
+        'credits.eyebrow': 'Créditos', 'credits.title': 'Feito sobre o trabalho de outras pessoas',
+        'credits.emula': 'Criou as cartas em português em HD e as distribui de graça no blog <a href="https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html">Cartas Caseiras</a>.',
+        'credits.ruan': 'O proxy maker original de <a href="https://github.com/Ruancard">Ruan Cardoso</a>, base deste projeto.',
+        'credits.ygopro': 'Dados das cartas e artes em inglês, pela <a href="https://ygoprodeck.com/api-guide/">API do YGOPRODeck</a>.',
+        'credits.yugipedia': 'Imagens dos versos oficiais TCG, OCG e coreano, da <a href="https://yugipedia.com">Yugipedia</a>.',
+        footer: 'Yu-Gi-Oh! é marca registrada da Konami. Este é um projeto de fã, não oficial e sem vínculo com a Konami. Proxies são para uso pessoal e casual — não para torneios oficiais nem venda.'
+      }
+    };
+
+    const ALT = {
+      en: { main: 'Main screen: card list, print preview and settings', modal: 'Artwork picker with Portuguese and English tabs', themes: 'The five themes', print: 'Printed sheet: front and mirrored back' },
+      pt: { main: 'Tela principal: lista de cartas, prévia de impressão e ajustes', modal: 'Seletor de artes com abas em português e inglês', themes: 'Os cinco temas', print: 'Folha impressa: frente e verso espelhado' }
+    };
+
+    function setLang(lang) {
+      const t = T[lang];
+      document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+      document.title = t.title;
+      document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t[el.dataset.i18n]; });
+      document.querySelectorAll('[data-i18n-html]').forEach((el) => { el.innerHTML = t[el.dataset.i18nHtml]; });
+      document.querySelectorAll('img[data-src]').forEach((img) => {
+        img.src = `screenshots/${lang}/${img.dataset.src}.webp`;
+        img.alt = ALT[lang][img.dataset.src];
+      });
+      document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+      try { localStorage.setItem('ygo_proxies_site_lang', lang); } catch { /* sem armazenamento */ }
+    }
+
+    document.querySelectorAll('.lang button').forEach((b) => b.addEventListener('click', () => setLang(b.dataset.lang)));
+    let inicial = 'en';
+    try { inicial = localStorage.getItem('ygo_proxies_site_lang') || ''; } catch { inicial = ''; }
+    if (!T[inicial]) inicial = (navigator.language || 'en').toLowerCase().startsWith('pt') ? 'pt' : 'en';
+    setLang(inicial);
+  </script>
+</body>
+</html>

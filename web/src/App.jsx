@@ -8,8 +8,12 @@ import { calculatePrintLayout } from './utils/printMath';
 import { getItemImage, getItemKey } from './utils/cardImages';
 import Logo from './components/Logo';
 import ThemeSwitcher from './components/ThemeSwitcher';
+import LanguageSwitcher from './components/LanguageSwitcher';
+import { useI18n } from './utils/i18n';
 
 export default function App() {
+  const { t } = useI18n();
+
   // Lista de proxies a serem impressas
   const [addedCards, setAddedCards] = useState(() => {
     try {
@@ -143,14 +147,14 @@ export default function App() {
 
   // Limpar lista de cartas
   const handleClearList = () => {
-    if (window.confirm('Tem certeza que deseja limpar toda a sua lista de cartas selecionadas?')) {
+    if (window.confirm(t('settings.confirmClear'))) {
       setAddedCards([]);
     }
   };
 
   // Restaurar configurações de impressão para os padrões
   const handleResetConfig = () => {
-    if (window.confirm('Tem certeza que deseja restaurar as configurações da folha para os valores padrão?')) {
+    if (window.confirm(t('settings.confirmReset'))) {
       setConfig({
         sheetSize: 'A4',
         scale: 100,
@@ -196,7 +200,7 @@ export default function App() {
           <h1>Yu-Gi-Oh! <span>Proxies</span></h1>
         </div>
         <div className="nav-actions">
-          <p className="nav-subtitle">PT · EN · OCG</p>
+          <LanguageSwitcher />
           <ThemeSwitcher />
         </div>
       </header>
@@ -216,11 +220,11 @@ export default function App() {
             <footer className="support-footer">
               <div className="footer-divider"></div>
               <p className="footer-source">
-                Cartas em português criadas por{' '}
+                {t('footer.ptCards')}{' '}
                 <a href="https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html" target="_blank" rel="noopener noreferrer">
                   Emula Animes
                 </a>
-                {' '}· Artes em inglês:{' '}
+                {' '}· {t('footer.enArt')}{' '}
                 <a href="https://ygoprodeck.com" target="_blank" rel="noopener noreferrer">YGOPRODeck</a>
               </p>
               <p className="footer-credits">Yu-Gi-Oh! Proxies &copy; {new Date().getFullYear()}</p>
@@ -270,7 +274,7 @@ export default function App() {
           card={editingItem}
           initialImage={getItemImage(editingItem)}
           initialQuantity={editingItem.quantity}
-          confirmLabel="Salvar Alterações"
+          confirmLabel={t('modal.save')}
           onClose={() => setEditingItem(null)}
           onConfirm={(card, imagem, quantity) => handleChangeImage(getItemKey(editingItem), imagem, quantity)}
         />

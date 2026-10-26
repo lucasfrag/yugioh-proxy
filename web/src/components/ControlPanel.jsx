@@ -1,8 +1,13 @@
 import React from 'react';
 import { Printer, Settings, Trash2, RotateCcw } from 'lucide-react';
 import { PAGE_SIZES } from '../utils/printMath';
+import { useI18n } from '../utils/i18n';
 
 export default function ControlPanel({ config, onUpdateConfig, onClearList, onResetConfig, onPrint, hasCards, availableBacks }) {
+  const { t } = useI18n();
+  // Nomes das folhas que mudam com o idioma (A4, A3... são iguais em todos)
+  const nomeFolha = (size) => (['Letter', 'Legal', 'Tabloid'].includes(size) ? t(`paper.${size}`) : PAGE_SIZES[size].name);
+
   const handleSelectChange = (e) => {
     onUpdateConfig({ sheetSize: e.target.value });
   };
@@ -19,13 +24,13 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
     <div className="control-panel">
       <div className="panel-section-header">
         <Settings size={18} className="section-icon" />
-        <span className="section-title">Ajustes de Impressão</span>
+        <span className="section-title">{t('settings.title')}</span>
       </div>
 
       <div className="control-groups-wrapper">
         {/* Tamanho da Folha */}
         <div className="control-group">
-          <label className="input-label">Tamanho da Folha</label>
+          <label className="input-label">{t('settings.sheetSize')}</label>
           <select 
             value={config.sheetSize} 
             onChange={handleSelectChange}
@@ -33,7 +38,7 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
           >
             {Object.keys(PAGE_SIZES).map((size) => (
               <option key={size} value={size}>
-                {PAGE_SIZES[size].name} ({PAGE_SIZES[size].width}x{PAGE_SIZES[size].height} mm)
+                {nomeFolha(size)} ({PAGE_SIZES[size].width}x{PAGE_SIZES[size].height} mm)
               </option>
             ))}
           </select>
@@ -42,7 +47,7 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
         {/* Escala da Carta */}
         <div className="control-group">
           <div className="slider-label-row">
-            <label className="input-label">Escala da Carta</label>
+            <label className="input-label">{t('settings.scale')}</label>
             <span className="slider-value">{config.scale}%</span>
           </div>
           <input
@@ -56,7 +61,7 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
           />
           <div className="slider-limits">
             <span>70%</span>
-            <span>Original (100%)</span>
+            <span>{t('settings.scaleOriginal')}</span>
             <span>130%</span>
           </div>
         </div>
@@ -64,7 +69,7 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
         {/* Distância entre Cartas */}
         <div className="control-group">
           <div className="slider-label-row">
-            <label className="input-label">Espaçamento entre Cartas</label>
+            <label className="input-label">{t('settings.spacing')}</label>
             <span className="slider-value">{config.margin} mm</span>
           </div>
           <input
@@ -86,7 +91,7 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
         {/* Espessura da Borda de Corte */}
         <div className="control-group">
           <div className="slider-label-row">
-            <label className="input-label">Borda de Corte (Espessura)</label>
+            <label className="input-label">{t('settings.cutBorder')}</label>
             <span className="slider-value">{config.borderSize} mm</span>
           </div>
           <input
@@ -99,7 +104,7 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
             className="config-slider"
           />
           <div className="slider-limits">
-            <span>Sem borda</span>
+            <span>{t('settings.noBorder')}</span>
             <span>2 mm</span>
             <span>4 mm</span>
           </div>
@@ -114,7 +119,7 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
               onChange={handleCheckboxChange}
             />
             <span className="checkmark"></span>
-            <span className="checkbox-text">Intercalar páginas de Verso (frente/verso)</span>
+            <span className="checkbox-text">{t('settings.backs')}</span>
           </label>
         </div>
 
@@ -123,7 +128,7 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
           <div className="control-group" style={{ marginTop: '0.6rem', paddingLeft: '28px' }}>
             {/* Rótulo em cima e miniaturas quebrando linha: cabem os versos locais + os oficiais */}
             <div className="back-selector-horizontal-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '8px' }}>
-              <label className="input-label" style={{ marginBottom: '0' }}>Modelo do Verso</label>
+              <label className="input-label" style={{ marginBottom: '0' }}>{t('settings.backModel')}</label>
               <div className="back-thumbnails-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {availableBacks.map((url, idx) => {
                   const isSelected = config.selectedBackUrl === url || (!config.selectedBackUrl && idx === 0);
@@ -137,7 +142,7 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
                     >
                       <img 
                         src={url} 
-                        alt={`Verso ${idx + 1}`} 
+                        alt={t('settings.backAlt', { n: idx + 1 })} 
                       />
                     </button>
                   );
@@ -156,7 +161,7 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
               onChange={(e) => onUpdateConfig({ useSafetyMargin: e.target.checked })}
             />
             <span className="checkmark"></span>
-            <span className="checkbox-text">Aplicar Margem de Segurança da Folha (10mm)</span>
+            <span className="checkbox-text">{t('settings.safetyMargin')}</span>
           </label>
         </div>
       </div>
@@ -168,27 +173,27 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
           className="print-btn btn"
         >
           <Printer size={18} />
-          Imprimir Proxies
+          {t('settings.print')}
         </button>
 
         <div className="secondary-actions-row">
           <button
             onClick={onResetConfig}
             className="reset-btn btn-secondary"
-            title="Restaurar Configurações Padrão"
+            title={t('settings.resetTitle')}
           >
             <RotateCcw size={15} />
-            Resetar Ajustes
+            {t('settings.reset')}
           </button>
           
           <button
             onClick={onClearList}
             disabled={!hasCards}
             className="clear-btn btn-secondary"
-            title="Limpar Lista de Cartas"
+            title={t('settings.clearTitle')}
           >
             <Trash2 size={15} />
-            Limpar Lista
+            {t('settings.clear')}
           </button>
         </div>
       </div>

@@ -1,89 +1,162 @@
-# Yu-Gi-Oh! Proxies
+<p align="center">
+  <img src="docs/assets/banner-en.webp" alt="Yu-Gi-Oh! Proxies — build and print Yu-Gi-Oh! proxies, every card and every artwork, in English or Portuguese" width="100%" />
+</p>
 
-Versão do [Proxy Maker Brasil](https://www.proxymakerbrasil.com/) (de [Ruan Cardoso](https://github.com/Ruancard)) com **todas as cartas** (~14.600) e todas as variantes de arte, em imagens digitais limpas.
+<p align="center">
+  <b>English</b> · <a href="README.pt-BR.md">Português (Brasil)</a>
+</p>
 
-O código parte dos repositórios originais:
+<p align="center">
+  <a href="https://lucasfrag.github.io/yugioh-proxy/"><img alt="Website" src="https://img.shields.io/badge/website-lucasfrag.github.io-22d3ee?style=flat-square&labelColor=060a14" /></a>
+  <img alt="Node.js 20.9+" src="https://img.shields.io/badge/node-%E2%89%A520.9-22d3ee?style=flat-square&logo=nodedotjs&logoColor=white&labelColor=060a14" />
+  <img alt="React 19" src="https://img.shields.io/badge/react-19-22d3ee?style=flat-square&logo=react&logoColor=white&labelColor=060a14" />
+  <img alt="Vite 8" src="https://img.shields.io/badge/vite-8-22d3ee?style=flat-square&logo=vite&logoColor=white&labelColor=060a14" />
+  <img alt="Express 5" src="https://img.shields.io/badge/express-5-22d3ee?style=flat-square&logo=express&logoColor=white&labelColor=060a14" />
+  <img alt="Languages: English and Portuguese" src="https://img.shields.io/badge/i18n-EN%20%C2%B7%20PT--BR-6366f1?style=flat-square&labelColor=060a14" />
+</p>
 
-| Pasta | Origem | O que faz |
-|---|---|---|
-| `api/` | [ruancard/yugioh-api](https://github.com/ruancard/yugioh-api) | Express: base de cartas, busca e imagens |
-| `web/` | [ruancard/yugioh-proxies](https://github.com/ruancard/yugioh-proxies) | React + Vite: busca, lista, folhas de impressão |
+<p align="center">
+  <a href="#-features">Features</a> ·
+  <a href="#-quick-start">Quick start</a> ·
+  <a href="#-portuguese-cards">Portuguese cards</a> ·
+  <a href="#-themes">Themes</a> ·
+  <a href="#-how-it-works">How it works</a> ·
+  <a href="#-credits">Credits</a>
+</p>
 
-## Como rodar
+**Yu-Gi-Oh! Proxies** is a web app to build and print Yu-Gi-Oh! proxy cards for casual play and deck testing. Search any of the 14,600+ cards, pick the exact artwork you want — in English or in Portuguese — and print sheets at the official card size, ready to cut.
 
-Requer Node.js 20.9 ou mais novo (o projeto indica a versão 24 no `.nvmrc`). Se você usa o [nvm](https://github.com/nvm-sh/nvm), o `./run.sh` já ativa a versão certa sozinho.
+<p align="center">
+  <img src="docs/screenshots/en/main.webp" alt="Main screen: card list on the left, print preview in the center and print settings on the right" width="100%" />
+</p>
+
+## ✨ Features
+
+- **Every card** — fuzzy search across 14,600+ cards by English name, Portuguese name or card ID. Typos are fine.
+- **Every artwork** — all alternate artworks, as clean digital renders at 813 × 1185 px (~350 dpi at real size).
+- **English or Portuguese** — the interface, card names and card types switch between English and Brazilian Portuguese, and 1,900+ cards are available as HD Portuguese prints.
+- **Print-accurate sheets** — official 59 × 86 mm size (scalable 70–130%), A2 to A5, Letter, Legal and Tabloid, card spacing, cut borders and a printer safety margin. The preview is exactly what gets printed.
+- **Double-sided printing** — optional mirrored back pages, with up to 13 card back designs.
+- **Five themes** — Duel Disk, Millennium, Duel Table, Binder and the Original look. Your choice is remembered.
+- **Runs locally, no account** — your list and settings are saved in your browser.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/en/modal.webp" alt="Artwork picker showing the Portuguese and English tabs for Dark Magician" /></td>
+    <td width="50%"><img src="docs/screenshots/en/print.webp" alt="A printed sheet: nine cards on the front and mirrored card backs on the back" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Pick the artwork and the language</b></td>
+    <td align="center"><b>Real size, front and back</b></td>
+  </tr>
+</table>
+
+## 🚀 Quick start
+
+You need **Node.js 20.9 or newer**. The project ships an `.nvmrc`, so if you use [nvm](https://github.com/nvm-sh/nvm) the script picks the right version by itself.
 
 ```bash
-./run.sh            # instala, baixa a base (só na 1ª vez), gera o site e abre em http://localhost:3000
-./run.sh dev        # modo desenvolvimento, recarrega ao editar o código
-./run.sh atualizar  # baixa a base de cartas de novo (cartas novas) e sobe o site
-./run.sh cartas-pt  # baixa as cartas em português (coleção do Emula Animes) e sobe o site
+git clone https://github.com/lucasfrag/yugioh-proxy.git
+cd yugioh-proxy
+./run.sh
 ```
 
-Na primeira vez, o `./run.sh` pergunta se você quer baixar as **cartas em português**. Elas vêm direto da pasta pública do autor (veja abaixo); este projeto não hospeda nenhuma imagem. Se responder "não", ele não pergunta de novo, e dá para baixar depois com `./run.sh cartas-pt`. O download pode ser interrompido e retomado.
+Then open **http://localhost:3000**. On the first run, `run.sh` installs the dependencies, downloads the card database from YGOPRODeck, builds the site and starts it.
 
-A porta pode ser trocada com `PORT=8080 ./run.sh`.
-
-## O que mudou em relação ao original
-
-**Arte e quantidade no mesmo lugar, também para editar.** Ao clicar numa carta da busca, abre o modal com todas as artes da carta; é só escolher a arte e a quantidade e clicar em "Selecionar Carta". Na lista, o botão com o nome da arte (ou a miniatura) reabre o mesmo modal para trocar arte e quantidade. Se houver imagens em mais de um idioma (ex.: acervo PT local + artes EN), o modal mostra abas **Português / Inglês / OCG** para escolher o idioma.
-
-**Todas as cartas, sem precisar do acervo local.** No original, a base só tinha as cartas que estavam na pasta de imagens HD do autor (que não está no repositório). Agora o `setup` inclui todas as cartas do YGOPRODeck (~14.600), com o nome em português quando existe tradução.
-
-**De onde vêm as imagens: só renderizações digitais.**
-
-| Idioma | Fonte |
+| Command | What it does |
 |---|---|
-| Inglês | Artes digitais do [YGOPRODeck](https://ygoprodeck.com): 813 × 1185 px (~350 dpi no tamanho real), uma por arte alternativa |
-| Português | Coleção HD do Emula Animes (2.300+ cartas), baixada com `./run.sh cartas-pt` (como no original, a partir da pasta `IMAGES_BASE_DIR`) |
-| OCG (Japonês) | Ainda sem fonte digital |
+| `./run.sh` | Install what is missing, build the site and start it at `http://localhost:3000` |
+| `./run.sh cartas-pt` | Download the Portuguese HD cards (optional, see below) and start the site |
+| `./run.sh atualizar` | Download the card database again, to pick up newly released cards |
+| `./run.sh dev` | Development mode with hot reload (usually `http://localhost:5173`) |
 
-As imagens são baixadas uma vez e servidas do cache em `api/data/cache/`.
+Use another port with `PORT=8080 ./run.sh`.
 
-> **Cartas em português — criadas pelo Emula Animes.** São as mesmas do site original: uma coleção feita por fãs pelo **[Emula Animes](https://www.youtube.com/watch?v=JqDxDtMwyME)**, com 2.300+ cartas recriadas em HD (813 × 1185 px), distribuída de graça no blog **[Cartas Caseiras](https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html)**. O `./run.sh cartas-pt` (script `api/scripts/baixar_cartas_pt.js`) baixa cada carta da [pasta pública do autor no Google Drive](https://drive.google.com/drive/folders/1ZVQyZlSaNVBvNpMxiEwfEDdwZbgqTIQ-), converte de PNG para WebP (~200 KB por carta, ~450 MB no total) e grava um `CREDITOS.txt` junto. As imagens ficam em `api/imagens/` e estão no `.gitignore`: não são deste projeto. Encontrou um erro numa carta? Avise o autor nos comentários do blog. Cartas que não estão na coleção usam as artes em inglês. Não existe fonte digital equivalente para OCG.
+> [!NOTE]
+> There is no hosted version yet. The app runs on your machine because it downloads and caches card images locally instead of hotlinking them, as YGOPRODeck asks. The [project website](https://lucasfrag.github.io/yugioh-proxy/) is a presentation page.
 
-**Versos.** São 9 modelos (13 com as cartas PT, que trazem os 4 versos do Emula Animes): os 6 do site original (em `api/imagens/verso/`, baixados do proxymakerbrasil.com, já que não estão no repositório do autor) e os oficiais TCG, OCG e coreano (Yugipedia). Para adicionar versos próprios, coloque as imagens (`.webp`, `.png` ou `.jpg`) em `<IMAGES_BASE_DIR>/verso/` (por padrão `api/imagens/verso/`).
+## 🇧🇷 Portuguese cards
 
-**Rodapé.** A seção "Apoie o Projeto" (links e chaves de doação do autor original) foi removida; fica só a linha de créditos.
+The Portuguese cards are a fan-made collection of **2,300+ cards recreated in HD by [Emula Animes](https://www.youtube.com/watch?v=JqDxDtMwyME)**, shared for free on the blog **[Cartas Caseiras](https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html)**. They are the same cards used by the original Proxy Maker Brasil.
 
-**Identidade visual própria ("Duel Disk").** Todo o visual foi refeito para não se confundir com o original; as funcionalidades são as mesmas.
+- `./run.sh` asks once whether you want them; you can also run `./run.sh cartas-pt` at any time.
+- They are downloaded **straight from the creator's public folder** and converted from PNG to WebP (~200 KB per card, ~450 MB in total). The download can be interrupted and resumed.
+- **This project does not host any of these images.** They live in `api/imagens/` (ignored by git), together with a `CREDITOS.txt` file crediting the creator.
+- About 1,925 cards end up with Portuguese artwork; every other card uses the English artwork.
+- Found a mistake in a card? Tell the creator in the blog comments.
 
-| Elemento | Antes (original) | Agora |
-|---|---|---|
-| Nome | Proxy Maker Brasil | Yu-Gi-Oh! Proxies |
-| Cores | Roxo + dourado | Marinho `#060a14` + ciano `#22d3ee` (apoio índigo `#6366f1`) |
-| Fontes | Outfit / Plus Jakarta Sans (não carregadas) | Rajdhani (títulos) + Inter (texto), via Google Fonts |
-| Formas | Cantos arredondados, brilho dourado | Cantos retos, botões chanfrados, linhas de HUD, grade de fundo na prévia |
-| Logo | Ícone de brilho (lucide) | Hexágono de duel disk com carta (`web/src/components/Logo.jsx`, `public/favicon.svg`) |
+## 🎨 Themes
 
-**Layout que aproveita a tela.** Em telas largas (acima de 1280 px) são 3 colunas: cartas à esquerda (a lista ocupa a altura toda), prévia no centro e ajustes à direita, com o botão de imprimir sempre visível. A prévia calcula o zoom da folha para ocupar a altura livre (`web/src/utils/useSheetZoom.js`) e, quando sobra largura, mostra as páginas lado a lado (por exemplo, frente e verso). Entre 1024 e 1280 px, cartas e ajustes ficam empilhados à esquerda e a prévia fica fixa à direita; abaixo de 1024 px tudo empilha. O zoom vale só na tela: a impressão continua no tamanho real.
+Switch themes from the palette button in the top bar. Printing is never affected: sheets are always plain white paper.
 
-**Temas.** O botão com o ícone de paleta, no canto direito da navbar, troca entre 4 temas, e o navegador lembra a escolha:
+<p align="center">
+  <img src="docs/screenshots/en/themes.webp" alt="The five themes: Duel Disk, Millennium, Duel Table, Binder and Original" width="100%" />
+</p>
 
-| Tema | Visual |
+| Theme | Look |
 |---|---|
-| Duel Disk (padrão) | Marinho e ciano, cantos retos, linhas de HUD, Rajdhani |
-| Milênio | Verde-escuro e bronze, cantos arredondados, títulos em Cinzel |
-| Mesa de Duelo | Grafite e vermelho, sóbrio, Oswald |
-| Fichário | Claro: creme, cartões brancos e verde-petróleo, Nunito |
+| **Duel Disk** (default) | Navy and cyan, square corners and HUD lines, Rajdhani headings |
+| **Millennium** | Deep green and bronze, rounded corners, Cinzel headings |
+| **Duel Table** | Graphite and red, understated, Oswald headings |
+| **Binder** | Light theme: cream, white panels and teal, Nunito headings |
+| **Original** | The purple and gold look of Proxy Maker Brasil |
 
-Cada tema só redefine variáveis (`:root[data-theme="..."]` em `web/src/index.css`); o nome e as amostras do seletor ficam em `web/src/utils/themes.js`. Para criar um tema novo, copie um desses blocos, ajuste as cores e acrescente uma linha em `themes.js`. A impressão não muda com o tema.
+Each theme only redefines CSS variables (`:root[data-theme="…"]` in `web/src/index.css`). To add a theme, copy one of those blocks, change the colors, and add an entry to `web/src/utils/themes.js` and to the translations in `web/src/utils/i18n.js`.
 
-As cores ficam em variáveis no topo de `web/src/index.css`, para facilitar ajustes. A página de documentação da API (`/api`) usa a mesma paleta. O `robots.txt` não aponta mais para o sitemap do domínio original, e o `sitemap.xml` foi removido.
+## 🛠️ How it works
 
-### Mudanças técnicas
+```
+yugioh-proxy/
+├── api/                 Express API: card database, search, images
+│   ├── scripts/         setup_database.js (card base) · baixar_cartas_pt.js (Portuguese cards)
+│   ├── src/             routes, image cache, API docs page (/api)
+│   ├── imagens/verso/   card backs
+│   └── data/            card database and image cache (generated, not versioned)
+├── web/                 React + Vite front end
+│   └── src/             components, themes (index.css), translations (utils/i18n.js)
+├── docs/                project website (GitHub Pages) and README images
+└── run.sh               one command to install, build and run
+```
 
-- `api/src/routes/cartas.js`: nova rota `GET /api/cartas/:id/imagens` (imagens por idioma); cartas sem imagem local usam as artes do YGOPRODeck; versos remotos.
-- `api/src/app.js`: rotas `/imagens/ygoprodeck` e `/imagens/verso-remoto` (cache local); serve o site de `web/dist` em `/` (a documentação da API continua em `/api`).
-- `api/src/utils/cache.js`: download e cache local de imagens.
-- `api/scripts/setup_database.js` e `mapper.js`: base completa e campo `artes`.
-- `web/src/components/ArtworkSelectionModal.jsx`: abas de idioma; `CardList.jsx`: botão para trocar idioma/arte; os itens guardam a imagem escolhida (`imagemSelecionada`).
-- `web/src/components/ControlPanel.jsx`: miniaturas de verso quebram linha (cabem os 9 modelos).
-- `web/src/App.jsx` e `index.css`: removido o bloco "Apoie o Projeto" do rodapé.
-- `api/scripts/baixar_cartas_pt.js` (`npm run cartas-pt`): download das cartas PT da pasta do autor, com conversão para WebP pela [sharp](https://sharp.pixelplumbing.com/).
-- `web/package.json`: Vite 6 e ESLint 9 (versões anteriores às do original, escolhidas quando o projeto ainda rodava no Node 18; com o Node atual dá para voltar ao Vite 8).
-- Três testes da API foram atualizados porque supunham o acervo local.
+- **Card data** comes from the [YGOPRODeck API](https://ygoprodeck.com/api-guide/): every card in English, plus the official Portuguese names and texts where they exist.
+- **Images** are downloaded once and served from a local cache (`api/data/cache/`), never hotlinked.
+- **The front end** is built into `web/dist` and served by the API itself, so everything runs on a single port.
 
-## Créditos
+<details>
+<summary><b>API endpoints</b></summary>
 
-Projeto original: Ruan Cardoso. Cartas em português (acervo HD): criadas pelo **Emula Animes** e distribuídas gratuitamente no blog [Cartas Caseiras](https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html) ([YouTube](https://www.youtube.com/watch?v=JqDxDtMwyME)). Dados e artes em inglês: YGOPRODeck. Versos oficiais: Yugipedia. Yu-Gi-Oh! é marca registrada da Konami. Proxies são para uso pessoal e casual, não para torneios oficiais nem venda.
+| Endpoint | Description |
+|---|---|
+| `GET /api/cartas?nome=…` | Search by name (Portuguese or English) or ID, with pagination |
+| `GET /api/cartas/:id` | One card by ID |
+| `GET /api/cartas/nome/:nome` | Card by exact name |
+| `GET /api/cartas/:id/imagens` | All images of a card, grouped by language (`pt`, `en`, `ocg`) |
+| `GET /api/cartas/backs` | Available card backs |
+| `GET /api` | Interactive API documentation page |
+
+</details>
+
+<details>
+<summary><b>Differences from the original Proxy Maker Brasil</b></summary>
+
+This project builds on the code of [Proxy Maker Brasil](https://www.proxymakerbrasil.com/) by Ruan Cardoso ([yugioh-api](https://github.com/ruancard/yugioh-api) and [yugioh-proxies](https://github.com/ruancard/yugioh-proxies)), which became `api/` and `web/`.
+
+- **All cards.** The original database only had the ~1,900 cards present in the author's private image folder. The setup now includes all ~14,600 cards from YGOPRODeck, using Portuguese names where a translation exists.
+- **Artwork and language in one place.** The artwork picker groups images by language and also edits cards already in the list.
+- **English interface.** Full English and Portuguese UI, including card names and types.
+- **Portuguese cards from the source.** Downloaded from the creator's public folder, with credit, instead of coming from a private folder.
+- **Own visual identity and themes**, plus a layout that adapts the preview to the available space.
+- **More card backs:** the original six, the official TCG/OCG/Korean backs and the creator's backs.
+
+</details>
+
+## 🙏 Credits
+
+- **[Emula Animes](https://www.youtube.com/watch?v=JqDxDtMwyME)** — created the Portuguese HD cards and shares them for free at [Cartas Caseiras](https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html).
+- **[Ruan Cardoso](https://github.com/Ruancard)** — author of [Proxy Maker Brasil](https://www.proxymakerbrasil.com/), which this project builds upon.
+- **[YGOPRODeck](https://ygoprodeck.com/api-guide/)** — card data and English artwork.
+- **[Yugipedia](https://yugipedia.com)** — official TCG, OCG and Korean card back images.
+
+## ⚖️ Disclaimer
+
+Yu-Gi-Oh! is a trademark of Konami. This is an unofficial fan project, not affiliated with or endorsed by Konami. Card images and texts are © Konami / Kazuki Takahashi. Proxies are meant for personal and casual play only: they are not allowed in sanctioned tournaments and must not be sold.

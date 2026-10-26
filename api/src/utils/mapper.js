@@ -140,6 +140,8 @@ function mapCard(rawCard, imageRelativePaths = [], hostUrl) {
     nome_en: rawCard.name_en || rawCard.name,
     tipo_carta: tipoCarta,
     tipo: tipo,
+    // Tipo em inglês, para a interface em inglês (ex.: "Normal Monster", "Quick-Play Spell")
+    tipo_en: rawCard.humanReadableCardType || rawCard.type || null,
     desc: rawCard.desc || '',
     atk: rawCard.atk !== undefined ? rawCard.atk : null,
     def: rawCard.def !== undefined ? rawCard.def : null,

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, Loader2 } from 'lucide-react';
 import { IDIOMAS } from '../utils/cardImages';
+import { artLabel, cardNames, cardType, useI18n } from '../utils/i18n';
 
 export default function ArtworkSelectionModal({
   card,
@@ -8,8 +9,9 @@ export default function ArtworkSelectionModal({
   onConfirm,
   initialImage = null,
   initialQuantity = 1,
-  confirmLabel = 'Selecionar Carta'
+  confirmLabel
 }) {
+  const { lang, t } = useI18n();
   const [imagens, setImagens] = useState(null);
   const [erro, setErro] = useState('');
   const [idioma, setIdioma] = useState(initialImage?.idioma || null);
@@ -28,21 +30,26 @@ export default function ArtworkSelectionModal({
         setImagens(data.idiomas);
         if (data.erro) setErro(data.erro);
 
-        // Idioma inicial: o da imagem já escolhida, senão Português (se houver), senão Inglês
+        // Idioma inicial: o da imagem já escolhida; senão, na interface em inglês, as artes em
+        // inglês; na interface em português, as cartas PT (se houver)
         if (!hasInitialImage) {
-          const inicial = data.idiomas.pt.length > 0 ? 'pt' : 'en';
+          const inicial = lang !== 'en' && data.idiomas.pt.length > 0 ? 'pt' : 'en';
           setIdioma(inicial);
           setSelected(withIdioma(data.idiomas[inicial][0], inicial));
         }
       } catch {
-        if (!cancelado) setErro('Não foi possível carregar as imagens desta carta.');
+        if (!cancelado) setErro('modal.error');
       }
     }
     fetchImagens();
     return () => { cancelado = true; };
+    // O idioma da interface só influencia a aba inicial, ao abrir o modal
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [card.id, hasInitialImage]);
 
   if (!card) return null;
+
+  const nomes = cardNames(card, lang);
 
   const lista = (imagens && idioma && imagens[idioma]) || [];
   // As abas só aparecem quando há imagens em mais de um idioma (ex.: acervo PT local + artes EN)
@@ -68,30 +75,30 @@ export default function ArtworkSelectionModal({
   return (
     <div className="modal-overlay">
       <div className="modal-content modal-content-wide">
-        <button className="modal-close-btn" onClick={onClose} aria-label="Fechar">
+        <button className="modal-close-btn" onClick={onClose} aria-label={t('modal.close')}>
           <X size={20} />
         </button>
 
         <div className="modal-header">
-          <h2 className="modal-title">{card.nome}</h2>
+          <h2 className="modal-title">{nomes.principal}</h2>
           <div className="modal-sub-details">
             <span className="modal-card-id">ID: {card.id}</span>
-            {card.nome_en && card.nome_en !== card.nome && <span className="modal-card-type">{card.nome_en}</span>}
-            {card.tipo && <span className="modal-card-type">{card.tipo}</span>}
+            {nomes.secundario && <span className="modal-card-type">{nomes.secundario}</span>}
+            {card.tipo && <span className="modal-card-type">{cardType(card, lang)}</span>}
           </div>
         </div>
 
         <div className="modal-body">
           {mostrarAbas && (
             <div className="language-tabs">
-              {idiomasDisponiveis.map(({ id, nome }) => (
+              {idiomasDisponiveis.map(({ id }) => (
                 <button
                   key={id}
                   type="button"
                   className={`language-tab ${idioma === id ? 'active' : ''}`}
                   onClick={() => handleChangeIdioma(id)}
                 >
-                  {nome}
+                  {t(`modal.lang.${id}`)}
                   <span className="language-tab-count">{imagens[id].length}</span>
                 </button>
               ))}
@@ -100,22 +107,20 @@ export default function ArtworkSelectionModal({
 
           {imagens && (
             <p className="modal-instructions">
-              {lista.length > 1
-                ? 'Esta carta possui múltiplas ilustrações disponíveis. Selecione a versão desejada para impressão:'
-                : 'Confirme a ilustração e a quantidade de cópias para impressão:'}
+              {lista.length > 1 ? t('modal.multiple') : t('modal.single')}
             </p>
           )}
 
-          {erro && <p className="modal-warning">{erro}</p>}
+          {erro && <p className="modal-warning">{t(erro)}</p>}
 
           {!imagens && !erro && (
             <div className="modal-loading">
-              <Loader2 className="loading-spinner" size={22} /> Carregando imagens...
+              <Loader2 className="loading-spinner" size={22} /> {t('modal.loading')}
             </div>
           )}
 
           {imagens && lista.length === 0 && (
-            <p className="modal-instructions">Nenhuma imagem disponível para esta carta.</p>
+            <p className="modal-instructions">{t('modal.none')}</p>
           )}
 
           <div className="artwork-grid-container">
@@ -127,8 +132,8 @@ export default function ArtworkSelectionModal({
                   onClick={() => setSelected(withIdioma(img, idioma))}
                 >
                   <div className="artwork-card-wrapper">
-                    <img src={img.miniatura} alt={`${card.nome} - ${img.rotulo}`} className="artwork-preview-image" loading="lazy" />
-                    <div className="artwork-badge">{img.rotulo}</div>
+                    <img src={img.miniatura} alt={`${nomes.principal} - ${artLabel(img.rotulo, t)}`} className="artwork-preview-image" loading="lazy" />
+                    <div className="artwork-badge">{artLabel(img.rotulo, t)}</div>
                   </div>
                 </div>
               ))}
@@ -138,7 +143,7 @@ export default function ArtworkSelectionModal({
 
         <div className="modal-footer">
           <div className="modal-quantity-group">
-            <span className="qty-label">Quantidade:</span>
+            <span className="qty-label">{t('modal.quantity')}</span>
             <div className="modal-quantity-controls">
               <button onClick={decrementQty} className="modal-qty-btn" type="button">
                 <Minus size={16} />
@@ -152,10 +157,10 @@ export default function ArtworkSelectionModal({
 
           <div className="modal-action-buttons">
             <button className="modal-btn-cancel" onClick={onClose}>
-              Cancelar
+              {t('modal.cancel')}
             </button>
             <button className="modal-btn-confirm" onClick={handleConfirm} disabled={!selected}>
-              {confirmLabel}
+              {confirmLabel || t('modal.select')}
             </button>
           </div>
         </div>

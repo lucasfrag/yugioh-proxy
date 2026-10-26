@@ -1,12 +1,12 @@
 // Temas visuais do site. As cores de cada tema ficam no index.css (:root[data-theme="..."]);
-// aqui ficam só o nome e as amostras de cor mostradas no seletor.
+// aqui ficam só as amostras de cor do seletor (nomes e descrições estão em utils/i18n.js).
 
 export const THEMES = [
-  { id: 'duel-disk', nome: 'Duel Disk', descricao: 'Marinho e ciano, estilo HUD', cores: ['#060a14', '#22d3ee', '#6366f1'] },
-  { id: 'milenio', nome: 'Milênio', descricao: 'Verde-escuro e bronze', cores: ['#0a1411', '#d4945f', '#34d399'] },
-  { id: 'grafite', nome: 'Mesa de Duelo', descricao: 'Grafite e vermelho, sóbrio', cores: ['#111214', '#ef4444', '#a1a1aa'] },
-  { id: 'fichario', nome: 'Fichário', descricao: 'Claro: creme e verde-petróleo', cores: ['#f4efe6', '#0f766e', '#b45309'] },
-  { id: 'original', nome: 'Original', descricao: 'Roxo e dourado do Proxy Maker Brasil', cores: ['#090613', '#d4af37', '#8a2be2'] }
+  { id: 'duel-disk', cores: ['#060a14', '#22d3ee', '#6366f1'] },
+  { id: 'milenio', cores: ['#0a1411', '#d4945f', '#34d399'] },
+  { id: 'grafite', cores: ['#111214', '#ef4444', '#a1a1aa'] },
+  { id: 'fichario', cores: ['#f4efe6', '#0f766e', '#b45309'] },
+  { id: 'original', cores: ['#090613', '#d4af37', '#8a2be2'] }
 ];
 
 const STORAGE_KEY = 'ygo_proxies_tema';

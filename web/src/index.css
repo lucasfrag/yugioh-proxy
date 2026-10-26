@@ -100,6 +100,7 @@
   --font-display: Arial, Helvetica, sans-serif;
   --font-body: Arial, Helvetica, sans-serif;
   --label-tracking: 1px;
+  --button-size: 0.78rem;
   --nav-line: #d4af37;
   --nav-line-size: 2px;
   --value-color: #ffffff;
@@ -311,16 +312,6 @@ input:focus-visible {
   -webkit-text-fill-color: var(--title-text-fill);
 }
 
-.nav-subtitle {
-  font-family: var(--font-display);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  border: 1px solid var(--line);
-  padding: 4px 10px;
-}
 
 /* Corpo do Layout: cartas | prévia | ajustes */
 .layout-body {
@@ -1991,13 +1982,43 @@ button, select, input[type="range"], input[type="checkbox"], .checkmark {
   flex-shrink: 0;
 }
 
-@media (max-width: 640px) {
-  .nav-subtitle {
-    display: none;
-  }
-}
 
 /* Botões secundários dividem a linha sem vazar da coluna */
 .secondary-actions-row .btn-secondary {
   min-width: 0;
+}
+
+/* ===== Seletor de idioma (PT | EN) ===== */
+.language-switcher {
+  display: flex;
+  border: 1px solid var(--line-neutral);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.language-switcher-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.language-switcher-btn + .language-switcher-btn {
+  border-left: 1px solid var(--line-neutral);
+}
+
+.language-switcher-btn:hover:not(.active) {
+  color: var(--text-strong);
+  background: var(--accent-dim);
+}
+
+.language-switcher-btn.active {
+  background: var(--accent-fill);
+  color: var(--text-on-accent);
 }

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Loader2 } from 'lucide-react';
 import { toThumbnail } from '../utils/cardImages';
+import { cardNames, cardType, useI18n } from '../utils/i18n';
 
 export default function SearchBar({ onSelectCard }) {
+  const { lang, t } = useI18n();
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -53,12 +55,12 @@ export default function SearchBar({ onSelectCard }) {
 
   return (
     <div className="search-bar-container" ref={dropdownRef}>
-      <label className="input-label">Buscar Carta (Nome ou ID)</label>
+      <label className="input-label">{t('search.label')}</label>
       <div className="search-input-wrapper">
         <Search className="search-icon" size={18} />
         <input
           type="text"
-          placeholder="Ex: Mago Negro, 55144522..."
+          placeholder={t('search.placeholder')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query.trim() && setShowDropdown(true)}
@@ -70,6 +72,7 @@ export default function SearchBar({ onSelectCard }) {
       {showDropdown && suggestions.length > 0 && (
         <ul className="suggestions-dropdown">
           {suggestions.map((card) => {
+            const nomes = cardNames(card, lang);
             const hasImage = card.imagens && card.imagens.length > 0;
             const typeColor = card.tipo_carta === 'Carta Mágica' ? '#1d9e74' : 
                               card.tipo_carta === 'Carta de Armadilha' ? '#bc2c72' : '#d37118';
@@ -78,19 +81,19 @@ export default function SearchBar({ onSelectCard }) {
               <li key={card.id} onClick={() => handleSelect(card)} className="suggestion-item">
                 <div className="suggestion-thumbnail">
                   {hasImage ? (
-                    <img src={toThumbnail(card.imagens[0])} alt={card.nome} />
+                    <img src={toThumbnail(card.imagens[0])} alt={nomes.principal} />
                   ) : (
                     <div className="no-image-thumb">?</div>
                   )}
                 </div>
                 <div className="suggestion-info">
                   <span className="suggestion-name">
-                    {card.nome} <span className="suggestion-id-tag">(ID: {card.id})</span>
+                    {nomes.principal} <span className="suggestion-id-tag">(ID: {card.id})</span>
                   </span>
                   <div className="suggestion-meta">
-                    <span className="suggestion-en-name">{card.nome_en}</span>
+                    <span className="suggestion-en-name">{nomes.secundario}</span>
                     <span className="suggestion-type" style={{ color: typeColor }}>
-                      {card.tipo}
+                      {cardType(card, lang)}
                     </span>
                   </div>
                 </div>
@@ -102,7 +105,7 @@ export default function SearchBar({ onSelectCard }) {
 
       {showDropdown && query.trim() && !loading && suggestions.length === 0 && (
         <div className="suggestions-dropdown no-results">
-          Nenhuma carta correspondente encontrada.
+          {t('search.none')}
         </div>
       )}
     </div>
