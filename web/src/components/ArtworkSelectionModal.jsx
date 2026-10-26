@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, Loader2 } from 'lucide-react';
 import { IDIOMAS } from '../utils/cardImages';
 import { artLabel, cardNames, cardType, useI18n } from '../utils/i18n';
+import { getCardImages } from '../utils/api';
 
 export default function ArtworkSelectionModal({
   card,
@@ -24,8 +25,7 @@ export default function ArtworkSelectionModal({
     let cancelado = false;
     async function fetchImagens() {
       try {
-        const response = await fetch(`/api/cartas/${card.id}/imagens`);
-        const data = await response.json();
+        const data = await getCardImages(card);
         if (cancelado) return;
         setImagens(data.idiomas);
         if (data.erro) setErro(data.erro);

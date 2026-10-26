@@ -10,6 +10,7 @@ import Logo from './components/Logo';
 import ThemeSwitcher from './components/ThemeSwitcher';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { useI18n } from './utils/i18n';
+import { getBacks } from './utils/api';
 
 export default function App() {
   const { t } = useI18n();
@@ -59,8 +60,7 @@ export default function App() {
   useEffect(() => {
     async function fetchBacks() {
       try {
-        const response = await fetch('/api/cartas/backs');
-        const data = await response.json();
+        const data = await getBacks();
         setAvailableBacks(data || []);
         
         // Se a configuração de verso estiver vazia, define a primeira como padrão

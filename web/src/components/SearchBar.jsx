@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, Loader2 } from 'lucide-react';
 import { toThumbnail } from '../utils/cardImages';
 import { cardNames, cardType, useI18n } from '../utils/i18n';
+import { searchCards } from '../utils/api';
 
 export default function SearchBar({ onSelectCard }) {
   const { lang, t } = useI18n();
@@ -21,9 +22,7 @@ export default function SearchBar({ onSelectCard }) {
     const delayDebounceFn = setTimeout(async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/cartas?nome=${encodeURIComponent(query)}&limit=10`);
-        const data = await response.json();
-        setSuggestions(data.resultados || []);
+        setSuggestions(await searchCards(query, 10));
         setShowDropdown(true);
       } catch (error) {
         console.error('Erro ao buscar sugestões:', error);

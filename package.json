@@ -9,6 +9,8 @@
   "scripts": {
     "setup": "npm run setup -w yugioh-api",
     "cartas-pt": "npm run cartas-pt -w yugioh-api",
+    "site-estatico": "npm run site-estatico -w yugioh-api --",
+    "publicar": "npx --yes wrangler@4 pages deploy site-estatico --project-name yugioh-proxy --branch main --commit-dirty=true",
     "dev": "concurrently -n api,web -c blue,magenta \"npm start -w yugioh-api\" \"npm run dev -w yugioh-proxies\"",
     "build": "npm run build -w yugioh-proxies",
     "start": "npm start -w yugioh-api",

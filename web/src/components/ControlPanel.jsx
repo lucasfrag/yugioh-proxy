@@ -138,7 +138,7 @@ export default function ControlPanel({ config, onUpdateConfig, onClearList, onRe
                       type="button"
                       className={`back-thumbnail-option ${isSelected ? 'selected' : ''}`}
                       onClick={() => onUpdateConfig({ selectedBackUrl: url })}
-                      title={decodeURIComponent(url.substring(url.lastIndexOf('/') + 1)).replace(/\.(png|jpg|jpeg)$/i, '')}
+                      title={decodeURIComponent(url.substring(url.lastIndexOf('/') + 1)).replace(/\.(png|jpe?g|webp)$/i, '')}
                     >
                       <img 
                         src={url} 

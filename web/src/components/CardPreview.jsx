@@ -3,8 +3,10 @@ import { getItemImage } from '../utils/cardImages';
 import { useSheetZoom } from '../utils/useSheetZoom';
 import { cardNames, useI18n } from '../utils/i18n';
 
+import { DEFAULT_BACK_URL } from '../utils/api';
+
 // URL padrão para o verso das cartas de Yu-Gi-Oh!
-const CARD_BACK_IMAGE_URL = '/imagens/verso-remoto/Back-EN.png';
+const CARD_BACK_IMAGE_URL = DEFAULT_BACK_URL;
 
 export default function CardPreview({ layoutResult, borderSize, sheetSize, useSafetyMargin, selectedBackUrl }) {
   const { pages } = layoutResult;

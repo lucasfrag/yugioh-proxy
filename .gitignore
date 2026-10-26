@@ -12,3 +12,6 @@ api/imagens/Fichas-Tokens/
 api/imagens/verso/Emula Animes - *
 api/imagens/CREDITOS.txt
 api/imagens/.sem-cartas-pt
+
+# Versão estática do site, gerada por "npm run site-estatico" (imagens não vão para o git)
+site-estatico/
