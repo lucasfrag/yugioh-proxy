@@ -1,0 +1,19 @@
+{
+  "name": "yugioh-proxy-maker",
+  "private": true,
+  "description": "Gerador de proxies de Yu-Gi-Oh! com cartas em PT-BR, inglês (TCG) e japonês (OCG).",
+  "workspaces": ["api", "web"],
+  "scripts": {
+    "setup": "npm run sync -w api",
+    "dev": "concurrently -n api,web -c blue,magenta \"npm run dev -w api\" \"npm run dev -w web\"",
+    "build": "npm run build -w web",
+    "start": "npm start -w api",
+    "test": "npm test -w api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  },
+  "engines": {
+    "node": ">=18.18"
+  }
+}
