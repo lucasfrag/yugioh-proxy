@@ -11,6 +11,8 @@ import ThemeSwitcher from './components/ThemeSwitcher';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { useI18n } from './utils/i18n';
 import { getBacks } from './utils/api';
+import DeckImportModal from './components/DeckImportModal';
+import { Layers } from 'lucide-react';
 
 export default function App() {
   const { t } = useI18n();
@@ -52,6 +54,9 @@ export default function App() {
 
   // Item da lista que está tendo o idioma/arte trocado
   const [editingItem, setEditingItem] = useState(null);
+
+  // Janela de importação de deck (YDKe / .ydk)
+  const [deckImportAberto, setDeckImportAberto] = useState(false);
 
   // Versos de carta disponíveis no servidor local
   const [availableBacks, setAvailableBacks] = useState([]);
@@ -104,6 +109,19 @@ export default function App() {
       }
       return [...prev, { ...card, quantity: quantityToAdd, imagemSelecionada: imagem }];
     });
+  };
+
+  // Importa um deck: cada item já vem com a carta, a imagem escolhida e a quantidade
+  const handleImportDeck = (itens, substituir) => {
+    if (substituir) setAddedCards([]);
+    itens.forEach(({ card, imagem, quantidade }) => handleConfirmAddCard(card, imagem, quantidade));
+  };
+
+  // Do resumo da importação: abre o seletor de artes da carta já adicionada à lista
+  const handleEditImportedCard = (cardId) => {
+    const item = addedCards.find((i) => i.id === cardId);
+    if (!item) return;
+    setEditingItem(item); // o resumo fica escondido por baixo e volta ao salvar/cancelar
   };
 
   // Handler para atualizar quantidade de uma imagem específica
@@ -210,6 +228,10 @@ export default function App() {
         <aside className="control-sidebar cards-sidebar no-print">
           <div className="sidebar-scrollable">
             <SearchBar onSelectCard={handleSelectCard} />
+            <button type="button" className="btn-secondary deck-import-btn" onClick={() => setDeckImportAberto(true)}>
+              <Layers size={15} />
+              {t('deck.button')}
+            </button>
             <CardList
               addedCards={addedCards}
               onUpdateQuantity={handleUpdateQuantity}
@@ -270,6 +292,16 @@ export default function App() {
           card={selectedCardForModal}
           onClose={() => setSelectedCardForModal(null)}
           onConfirm={handleConfirmAddCard}
+        />
+      )}
+
+      {/* Importação de deck (YDKe / .ydk) */}
+      {deckImportAberto && (
+        <DeckImportModal
+          onClose={() => setDeckImportAberto(false)}
+          onImport={handleImportDeck}
+          onEditCard={handleEditImportedCard}
+          oculto={!!editingItem}
         />
       )}
 

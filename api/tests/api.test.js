@@ -139,6 +139,17 @@ test('Yu-Gi-Oh! API integration tests', async (t) => {
     assert.ok(errorData.erro, 'Deve conter uma mensagem de erro na resposta');
   });
 
+  // Teste 5.5: Várias cartas por ID (importação de decks), inclusive por ID de arte alternativa
+  await t.test('GET /api/cartas/lote - deve encontrar cartas por ID e por ID de arte alternativa', async () => {
+    const res = await fetch(`${baseUrl}/api/cartas/lote?ids=46986414,46986415,999999999`);
+    assert.strictEqual(res.status, 200);
+
+    const data = await res.json();
+    assert.strictEqual(data['46986414'].nome, 'Mago Negro', 'Deve encontrar a carta pelo ID');
+    assert.strictEqual(data['46986415'].id, 46986414, 'O ID de arte alternativa deve levar à carta original');
+    assert.strictEqual(data['999999999'], undefined, 'IDs inexistentes não entram na resposta');
+  });
+
   // Teste 6: Obter versos disponíveis
   await t.test('GET /api/cartas/backs - deve listar os versos de carta disponíveis (pasta local ou versos oficiais)', async () => {
     const res = await fetch(`${baseUrl}/api/cartas/backs`);

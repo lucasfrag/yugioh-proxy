@@ -2039,3 +2039,158 @@ button, select, input[type="range"], input[type="checkbox"], .checkmark {
 .modal-credit a:hover {
   border-bottom-color: var(--accent);
 }
+
+/* ===== Importação de deck ===== */
+.deck-import-btn {
+  width: 100%;
+  margin-top: -0.75rem;
+}
+
+.deck-textarea {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  background: var(--bg);
+  border: 1px solid var(--line-neutral);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--radius-sm);
+  color: var(--text-strong);
+  font: 0.85rem/1.5 ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  padding: 10px 12px;
+}
+
+.deck-textarea:focus {
+  outline: none;
+  border-color: var(--line-strong);
+  border-left-color: var(--accent);
+}
+
+.deck-file-row {
+  display: flex;
+  justify-content: flex-start;
+  margin: 10px 0 4px;
+}
+
+.deck-options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.deck-option-group .input-label {
+  margin-bottom: 8px;
+}
+
+.deck-lang {
+  display: inline-flex;
+  border: 1px solid var(--line-neutral);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.deck-lang-option {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font: 600 0.85rem var(--font-body);
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.deck-lang-option + .deck-lang-option {
+  border-left: 1px solid var(--line-neutral);
+}
+
+.deck-lang-option.active {
+  background: var(--accent-fill);
+  color: var(--text-on-accent);
+}
+
+.deck-lang-option:hover:not(.active):not(:disabled) {
+  color: var(--text-strong);
+  background: var(--accent-dim);
+}
+
+.deck-summary-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-bottom: 4px;
+}
+
+.deck-alt-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px;
+}
+
+.deck-alt-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 6px 6px;
+  background: var(--panel);
+  border: 1px solid var(--line-neutral);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.deck-alt-item:hover {
+  border-color: var(--accent);
+  background: var(--panel-hover);
+}
+
+.deck-alt-item img {
+  width: 30px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.deck-alt-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.deck-alt-count {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.deck-alt-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.deck-alt-item.revisada {
+  opacity: 0.6;
+}
+
+/* Resumo da importação escondido enquanto o seletor de artes está aberto */
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.deck-footer-hint {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.spin-inline {
+  animation: spin 1s infinite linear;
+  vertical-align: -3px;
+}

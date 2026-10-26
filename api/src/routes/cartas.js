@@ -201,6 +201,23 @@ router.get('/', (req, res) => {
   });
 });
 
+// GET /api/cartas/lote?ids=1,2,3 - Várias cartas por ID, para importar decks.
+// Aceita IDs de artes alternativas (comuns em arquivos .ydk); a resposta é { id: carta }.
+router.get('/lote', (req, res) => {
+  const ids = String(req.query.ids || '')
+    .split(',')
+    .map(id => parseInt(id, 10))
+    .filter(Number.isFinite)
+    .slice(0, 300);
+
+  const resultado = {};
+  for (const id of ids) {
+    const card = cards.find(c => c.id === id) || cards.find(c => c.artes && c.artes.includes(id));
+    if (card) resultado[id] = getDynamicCard(card, req);
+  }
+  res.json(resultado);
+});
+
 // GET /api/cartas/backs - Obter todos os versos (backs) disponíveis
 router.get('/backs', (req, res) => {
   try {

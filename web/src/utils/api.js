@@ -52,7 +52,11 @@ function carregarIndice() {
           threshold: 0.4,
           ignoreLocation: true
         });
-        return { cartas, fuse, versos: dados.versos.map((v) => `${BASE}img/verso/${v}`) };
+        // Busca por ID, inclusive de artes alternativas (usado na importação de decks)
+        const porId = new Map();
+        for (const c of cartas) porId.set(c.id, c);
+        for (const c of cartas) for (const artId of c.artes) if (!porId.has(artId)) porId.set(artId, c);
+        return { cartas, fuse, porId, versos: dados.versos.map((v) => `${BASE}img/verso/${v}`) };
       });
     indicePromise.catch(() => { indicePromise = null; });
   }
@@ -124,6 +128,24 @@ export async function getCardImages(card) {
   }
   const response = await fetch(`/api/cartas/${card.id}/imagens`);
   return response.json();
+}
+
+/** Várias cartas por ID (aceita IDs de artes alternativas). Devolve um Map id → carta. */
+export async function getCardsByIds(ids) {
+  const unicos = [...new Set(ids)];
+  const resultado = new Map();
+  if (IS_STATIC) {
+    const { porId } = await carregarIndice();
+    for (const id of unicos) if (porId.has(id)) resultado.set(id, porId.get(id));
+    return resultado;
+  }
+  // A API aceita até 300 IDs por vez; um deck tem no máximo ~75 cartas diferentes
+  for (let i = 0; i < unicos.length; i += 300) {
+    const response = await fetch(`/api/cartas/lote?ids=${unicos.slice(i, i + 300).join(',')}`);
+    const data = await response.json();
+    for (const [id, card] of Object.entries(data)) resultado.set(Number(id), card);
+  }
+  return resultado;
 }
 
 export async function getBacks() {
