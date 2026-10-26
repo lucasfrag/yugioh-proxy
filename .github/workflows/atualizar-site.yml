@@ -2,7 +2,8 @@
 # estático e publica no Cloudflare Pages.
 #
 # As artes que já estão no site publicado são copiadas de lá; só as cartas novas são baixadas
-# do YGOPRODeck (uma vez cada), como eles pedem.
+# do YGOPRODeck (uma vez cada), como eles pedem. As cartas em português (Emula Animes) também são
+# mantidas a partir do site publicado.
 #
 # Segredos necessários (Settings → Secrets and variables → Actions):
 #   CLOUDFLARE_API_TOKEN   token com permissão "Cloudflare Pages: Edit"
@@ -49,7 +50,7 @@ jobs:
         run: npm run setup
 
       - name: Build static site (reusing images from the live site)
-        run: npm run site-estatico
+        run: npm run site-estatico -- --com-pt
         env:
           ORIGEM_IMAGENS: ${{ env.SITE_URL }}
 
@@ -65,5 +66,6 @@ jobs:
             echo "### Cards updated"
             echo ""
             echo "- Cards in the index: $(node -e "console.log(require('./site-estatico/data/cartas.json').cartas.length)")"
+            echo "- Cards with Portuguese artwork: $(node -e "console.log(require('./site-estatico/data/cartas.json').cartas.filter(c => c[7].length).length)")"
             echo "- Site: ${{ env.SITE_URL }}"
           } >> "$GITHUB_STEP_SUMMARY"

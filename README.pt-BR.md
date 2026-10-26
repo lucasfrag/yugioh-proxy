@@ -82,7 +82,7 @@ Depois abra **http://localhost:3000**. Na primeira vez, o `run.sh` instala as de
 Para usar outra porta: `PORT=8080 ./run.sh`.
 
 > [!NOTE]
-> A [versão online](https://yugioh-proxy.pages.dev) é um build estático hospedado de graça no Cloudflare Pages: a busca roda no seu navegador e as imagens das cartas são cópias hospedadas, nunca puxadas direto de outro site (como o YGOPRODeck pede). Por enquanto ela tem **só as artes em inglês**; as cartas em português ficam disponíveis rodando o app localmente (`./run.sh cartas-pt`).
+> A [versão online](https://yugioh-proxy.pages.dev) é um build estático hospedado de graça no Cloudflare Pages: a busca roda no seu navegador e as imagens das cartas são cópias hospedadas, nunca puxadas direto de outro site (como o YGOPRODeck pede). Ela inclui as artes em inglês e as cartas em português em HD do [Emula Animes](https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html).
 
 ## 🇧🇷 Cartas em português
 
@@ -90,7 +90,7 @@ As cartas em português são uma coleção feita por fãs: **2.300+ cartas recri
 
 - O `./run.sh` pergunta uma vez se você quer baixá-las; também dá para rodar `./run.sh cartas-pt` a qualquer momento.
 - Elas são baixadas **direto da pasta pública do criador** e convertidas de PNG para WebP (~200 KB por carta, ~450 MB no total). O download pode ser interrompido e retomado.
-- **Este projeto não hospeda nenhuma dessas imagens.** Elas ficam em `api/imagens/` (fora do git), junto com um `CREDITOS.txt` que credita o criador.
+- Elas fazem parte da [versão online](https://yugioh-proxy.pages.dev); localmente, ficam em `api/imagens/` (fora do git), junto com um `CREDITOS.txt` que credita o criador.
 - Cerca de 1.925 cartas ficam com arte em português; as demais usam a arte em inglês.
 - Encontrou um erro numa carta? Avise o criador nos comentários do blog.
 
@@ -155,7 +155,7 @@ npm run site-estatico   # gera site-estatico/: índice das cartas, artes em ingl
 npm run publicar        # envia para o Cloudflare Pages (precisa de `npx wrangler login` uma vez)
 ```
 
-A primeira geração baixa cada arte em inglês do YGOPRODeck **uma única vez** (≈14.800 imagens, ~1,8 GB, no máximo 10 pedidos por segundo) e pode ser interrompida e retomada. As próximas gerações e publicações enviam só o que mudou. O resultado fica abaixo do limite de 20.000 arquivos do plano grátis do Cloudflare Pages. `npm run site-estatico -- --com-pt` inclui também as cartas em português — publique-as só com autorização do criador.
+A primeira geração baixa cada arte em inglês do YGOPRODeck **uma única vez** (≈14.800 imagens, ~1,8 GB, no máximo 10 pedidos por segundo) e pode ser interrompida e retomada. As próximas gerações e publicações enviam só o que mudou. O resultado fica abaixo do limite de 20.000 arquivos do plano grátis do Cloudflare Pages. `npm run site-estatico -- --com-pt` inclui também as cartas em português.
 
 **Atualização mensal.** O workflow [`Update cards`](.github/workflows/atualizar-site.yml) do GitHub Actions roda no dia 1º de cada mês (e quando você quiser, pela aba Actions): baixa a base de cartas mais recente, gera o site de novo e publica. As artes que já estão online são copiadas do próprio site publicado, então só as cartas recém-lançadas são baixadas do YGOPRODeck. Ele precisa de dois segredos no repositório: `CLOUDFLARE_API_TOKEN` (um token com permissão *Cloudflare Pages: Edit*) e `CLOUDFLARE_ACCOUNT_ID`.
 

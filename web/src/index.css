@@ -2022,3 +2022,20 @@ button, select, input[type="range"], input[type="checkbox"], .checkmark {
   background: var(--accent-fill);
   color: var(--text-on-accent);
 }
+
+/* Crédito das cartas em português no seletor de artes */
+.modal-credit {
+  margin: -6px 0 16px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.modal-credit a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.modal-credit a:hover {
+  border-bottom-color: var(--accent);
+}

@@ -3,7 +3,7 @@
 // A pasta gerada (site-estatico/ na raiz) contém:
 //   data/cartas.json   índice das cartas para a busca no navegador
 //   img/en/<id>.webp   artes em inglês, baixadas UMA vez do YGOPRODeck (que pede para não fazer hotlink)
-//   img/pt/...         cartas em português do Emula Animes — só com --com-pt (exige autorização do autor)
+//   img/pt/...         cartas em português do Emula Animes — só com --com-pt (com um CREDITOS.txt)
 //   img/verso/...      versos
 //   index.html, assets/ o site, gerado com VITE_STATIC=1
 //
@@ -100,6 +100,58 @@ async function salvarWebp(origem, destino) {
   fs.renameSync(tmp, destino);
 }
 
+const CREDITOS_PT = [
+  'CARTAS EM PORTUGUÊS — CRÉDITOS',
+  '',
+  'As cartas em português desta pasta foram criadas por fãs pelo Emula Animes e',
+  'distribuídas gratuitamente no blog Cartas Caseiras.',
+  'Os direitos do card game pertencem à Konami.',
+  '',
+  'Blog:     https://cartascaseiras.blogspot.com/',
+  'Postagem: https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html',
+  'YouTube:  https://www.youtube.com/watch?v=JqDxDtMwyME',
+  '',
+  'Encontrou um erro numa carta? Avise o autor nos comentários do blog.',
+  ''
+].join('\n');
+
+/**
+ * Copia do site publicado as cartas PT que já estão no ar (para cartas sem imagem PT local).
+ * Usa o índice publicado (data/cartas.json) para saber quais arquivos existem.
+ */
+async function cartasPtDoSitePublicado(idsAtuais, ptPorCarta) {
+  let indice;
+  try {
+    const res = await fetch(`${ORIGEM_IMAGENS}/data/cartas.json`, { headers: { 'User-Agent': USER_AGENT } });
+    if (!res.ok) return { cartas: 0, copiadas: 0 };
+    indice = await res.json();
+  } catch {
+    return { cartas: 0, copiadas: 0 };
+  }
+  let cartas = 0;
+  let copiadas = 0;
+  for (const [id, , , , , , , pt] of indice.cartas || []) {
+    if (!pt || pt.length === 0 || ptPorCarta.has(id) || !idsAtuais.has(id)) continue;
+    const arquivos = [];
+    for (const nome of pt) {
+      const destino = path.join(SAIDA, 'img', 'pt', nome);
+      if (!fs.existsSync(destino)) {
+        const res = await fetch(`${ORIGEM_IMAGENS}/img/pt/${nome}`, { headers: { 'User-Agent': USER_AGENT } });
+        if (!res.ok || !(res.headers.get('content-type') || '').includes('image/webp')) continue;
+        fs.mkdirSync(path.dirname(destino), { recursive: true });
+        fs.writeFileSync(destino, Buffer.from(await res.arrayBuffer()));
+        copiadas++;
+      }
+      arquivos.push(nome);
+    }
+    if (arquivos.length) {
+      ptPorCarta.set(id, arquivos);
+      cartas++;
+    }
+  }
+  return { cartas, copiadas };
+}
+
 /** Converte a URL de imagem local da base (…/imagens/monstros/Nome.webp) no caminho do arquivo. */
 function caminhoImagemLocal(url) {
   const m = /\/imagens\/(monstros|magias|armadilhas|tokens)\/(.+)$/.exec(url);
@@ -127,7 +179,7 @@ function contarArquivos(dir) {
 async function main() {
   console.log('=== Gerando o site estático ===');
   console.log(`Destino: ${SAIDA}`);
-  console.log(`Cartas em português: ${COM_PT ? 'INCLUÍDAS (--com-pt)' : 'não incluídas (use --com-pt com autorização do Emula Animes)'}\n`);
+  console.log(`Cartas em português: ${COM_PT ? 'incluídas (--com-pt)' : 'não incluídas (use --com-pt para incluir)'}\n`);
 
   if (!fs.existsSync(CARDS_DB_FILE)) {
     console.error('[ERRO] Base de cartas não encontrada. Rode "npm run setup" antes.');
@@ -157,7 +209,19 @@ async function main() {
       });
       if (arquivos.length) ptPorCarta.set(card.id, arquivos);
     }
-    console.log(`- ${ptPorCarta.size} cartas com arte em português (${copiadas} arquivos novos)`);
+    console.log(`- ${ptPorCarta.size} cartas com arte em português na pasta local (${copiadas} arquivos novos)`);
+
+    // Sem a pasta local (ex.: GitHub Actions): mantém as cartas PT que já estão no site publicado
+    if (ORIGEM_IMAGENS) {
+      const deSite = await cartasPtDoSitePublicado(new Set(cards.map(c => c.id)), ptPorCarta);
+      if (deSite.cartas) console.log(`- ${deSite.cartas} cartas mantidas do site publicado (${deSite.copiadas} arquivos copiados)`);
+    }
+    if (ptPorCarta.size === 0) {
+      console.error('[ERRO] --com-pt foi pedido, mas nenhuma carta em português foi encontrada (nem local, nem no site publicado).');
+      console.error('       Publicar assim tiraria as cartas PT do site. Rode "npm run cartas-pt" ou confira ORIGEM_IMAGENS.');
+      process.exit(1);
+    }
+    fs.writeFileSync(path.join(SAIDA, 'img', 'pt', 'CREDITOS.txt'), CREDITOS_PT, 'utf-8');
   } else {
     // Garante que uma geração anterior com --com-pt não deixe as imagens no site
     fs.rmSync(path.join(SAIDA, 'img', 'pt'), { recursive: true, force: true });
@@ -210,7 +274,7 @@ async function main() {
   }
   await Promise.all(Array.from({ length: DOWNLOADS_SIMULTANEOS }, trabalhador));
 
-  // 3. Versos: os da pasta local (sem os do Emula Animes, se não houver autorização) + oficiais
+  // 3. Versos: os da pasta local (os do Emula Animes só com --com-pt) + oficiais
   console.log('\n[3/5] Versos...');
   const versos = [];
   const pastaVerso = path.join(IMAGES_BASE_DIR, 'verso');

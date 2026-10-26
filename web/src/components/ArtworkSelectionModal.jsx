@@ -111,6 +111,16 @@ export default function ArtworkSelectionModal({
             </p>
           )}
 
+          {/* Crédito das cartas em português, sempre visível quando elas estão na tela */}
+          {idioma === 'pt' && lista.length > 0 && (
+            <p className="modal-credit">
+              {t('modal.ptCredit')}{' '}
+              <a href="https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html" target="_blank" rel="noopener noreferrer">
+                Emula Animes · Cartas Caseiras
+              </a>
+            </p>
+          )}
+
           {erro && <p className="modal-warning">{t(erro)}</p>}
 
           {!imagens && !erro && (

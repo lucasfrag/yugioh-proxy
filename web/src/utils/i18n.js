@@ -67,6 +67,7 @@ const MENSAGENS = {
     'modal.select': 'Selecionar Carta',
     'modal.save': 'Salvar Alterações',
     'modal.close': 'Fechar',
+    'modal.ptCredit': 'Cartas em português criadas por',
 
     'footer.ptCards': 'Cartas em português criadas por',
     'footer.enArt': 'Artes em inglês:',
@@ -148,6 +149,7 @@ const MENSAGENS = {
     'modal.select': 'Select Card',
     'modal.save': 'Save Changes',
     'modal.close': 'Close',
+    'modal.ptCredit': 'Portuguese cards created by',
 
     'footer.ptCards': 'Portuguese cards created by',
     'footer.enArt': 'English artwork:',

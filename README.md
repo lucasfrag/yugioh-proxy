@@ -82,7 +82,7 @@ Then open **http://localhost:3000**. On the first run, `run.sh` installs the dep
 Use another port with `PORT=8080 ./run.sh`.
 
 > [!NOTE]
-> The [online version](https://yugioh-proxy.pages.dev) is a static build hosted for free on Cloudflare Pages: search runs in your browser and card images are hosted copies, never hotlinked (as YGOPRODeck asks). For now it has **English artwork only**; the Portuguese cards are available when you run the app locally (`./run.sh cartas-pt`).
+> The [online version](https://yugioh-proxy.pages.dev) is a static build hosted for free on Cloudflare Pages: search runs in your browser and card images are hosted copies, never hotlinked (as YGOPRODeck asks). It includes the English artwork and the Portuguese HD cards by [Emula Animes](https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html).
 
 ## 🇧🇷 Portuguese cards
 
@@ -90,7 +90,7 @@ The Portuguese cards are a fan-made collection of **2,300+ cards recreated in HD
 
 - `./run.sh` asks once whether you want them; you can also run `./run.sh cartas-pt` at any time.
 - They are downloaded **straight from the creator's public folder** and converted from PNG to WebP (~200 KB per card, ~450 MB in total). The download can be interrupted and resumed.
-- **This project does not host any of these images.** They live in `api/imagens/` (ignored by git), together with a `CREDITOS.txt` file crediting the creator.
+- They are part of the [online version](https://yugioh-proxy.pages.dev); locally they live in `api/imagens/` (ignored by git), together with a `CREDITOS.txt` file crediting the creator.
 - About 1,925 cards end up with Portuguese artwork; every other card uses the English artwork.
 - Found a mistake in a card? Tell the creator in the blog comments.
 
@@ -155,7 +155,7 @@ npm run site-estatico   # builds site-estatico/: card index, English artwork as 
 npm run publicar        # uploads it to Cloudflare Pages (needs `npx wrangler login` once)
 ```
 
-The first build downloads each English artwork from YGOPRODeck **once** (≈14,800 images, ~1.8 GB, at most 10 requests per second) and can be interrupted and resumed. Later builds and uploads only send what changed. The result stays under the 20,000-file limit of the Cloudflare Pages free plan. `npm run site-estatico -- --com-pt` also includes the Portuguese cards — only publish them with the creator's permission.
+The first build downloads each English artwork from YGOPRODeck **once** (≈14,800 images, ~1.8 GB, at most 10 requests per second) and can be interrupted and resumed. Later builds and uploads only send what changed. The result stays under the 20,000-file limit of the Cloudflare Pages free plan. `npm run site-estatico -- --com-pt` also includes the Portuguese cards.
 
 **Monthly updates.** The [`Update cards`](.github/workflows/atualizar-site.yml) GitHub Actions workflow runs on the 1st of every month (and on demand from the Actions tab): it downloads the latest card database, rebuilds the site and publishes it. Artwork that is already online is copied from the live site itself, so only newly released cards are downloaded from YGOPRODeck. It needs two repository secrets: `CLOUDFLARE_API_TOKEN` (a token with *Cloudflare Pages: Edit* permission) and `CLOUDFLARE_ACCOUNT_ID`.
 
