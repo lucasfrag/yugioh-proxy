@@ -157,6 +157,8 @@ npm run publicar        # uploads it to Cloudflare Pages (needs `npx wrangler lo
 
 The first build downloads each English artwork from YGOPRODeck **once** (≈14,800 images, ~1.8 GB, at most 10 requests per second) and can be interrupted and resumed. Later builds and uploads only send what changed. The result stays under the 20,000-file limit of the Cloudflare Pages free plan. `npm run site-estatico -- --com-pt` also includes the Portuguese cards — only publish them with the creator's permission.
 
+**Monthly updates.** The [`Update cards`](.github/workflows/atualizar-site.yml) GitHub Actions workflow runs on the 1st of every month (and on demand from the Actions tab): it downloads the latest card database, rebuilds the site and publishes it. Artwork that is already online is copied from the live site itself, so only newly released cards are downloaded from YGOPRODeck. It needs two repository secrets: `CLOUDFLARE_API_TOKEN` (a token with *Cloudflare Pages: Edit* permission) and `CLOUDFLARE_ACCOUNT_ID`.
+
 </details>
 
 <details>

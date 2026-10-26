@@ -10,6 +10,9 @@
 // Uso: npm run site-estatico            (sem as cartas em português)
 //      npm run site-estatico -- --com-pt (inclui as cartas em português)
 // Pode ser interrompido e retomado: imagens já geradas são puladas.
+//
+// Atualização automática (GitHub Actions): com ORIGEM_IMAGENS=https://<site publicado>, as artes que
+// já estão no site no ar são copiadas de lá (já em WebP) e só as cartas novas são baixadas do YGOPRODeck.
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
@@ -21,11 +24,15 @@ const SAIDA = process.env.SITE_DIR || path.join(RAIZ, 'site-estatico');
 const COM_PT = process.argv.includes('--com-pt');
 // Para testes: processa só as N primeiras artes em inglês
 const LIMITE_ARTES = Number(process.env.SITE_LIMITE_ARTES) || Infinity;
+// Site já publicado de onde copiar as artes existentes (ex.: https://yugioh-proxy.pages.dev)
+const ORIGEM_IMAGENS = (process.env.ORIGEM_IMAGENS || '').replace(/\/+$/, '');
 
 const QUALIDADE_WEBP = 85;
 const LIMITE_ARQUIVOS = 20000; // plano grátis do Cloudflare Pages
 // Educado com o YGOPRODeck: no máximo ~10 pedidos por segundo (o limite deles é 20)
-const DOWNLOADS_SIMULTANEOS = 4;
+// Os pedidos ao YGOPRODeck são espaçados globalmente (aguardarVez), então mais trabalhadores
+// só aceleram as cópias do site publicado
+const DOWNLOADS_SIMULTANEOS = 12;
 const INTERVALO_MINIMO_MS = 100;
 
 const VERSOS_OFICIAIS = {
@@ -60,6 +67,30 @@ async function baixar(url) {
     await sleep(1000 * 2 ** tentativa);
   }
   throw ultimoErro;
+}
+
+/** Copia a arte do site já publicado (sem reconverter). Devolve false se ela ainda não existe lá. */
+async function copiarDoSitePublicado(id, destino) {
+  if (!ORIGEM_IMAGENS) return false;
+  for (let tentativa = 1; tentativa <= 3; tentativa++) {
+    try {
+      const res = await fetch(`${ORIGEM_IMAGENS}/img/en/${id}.webp`, { headers: { 'User-Agent': USER_AGENT } });
+      if (res.status === 404) return false;
+      if (res.ok && (res.headers.get('content-type') || '').includes('image/webp')) {
+        const buffer = Buffer.from(await res.arrayBuffer());
+        fs.mkdirSync(path.dirname(destino), { recursive: true });
+        fs.writeFileSync(`${destino}.${process.pid}.tmp`, buffer);
+        fs.renameSync(`${destino}.${process.pid}.tmp`, destino);
+        return true;
+      }
+      // Sem a imagem (ex.: página de fallback do Pages): trata como inexistente
+      if (res.ok) return false;
+    } catch {
+      // Falha de rede: tenta de novo
+    }
+    await sleep(1000 * tentativa);
+  }
+  return false;
 }
 
 async function salvarWebp(origem, destino) {
@@ -140,14 +171,25 @@ async function main() {
     .filter(id => !fs.existsSync(path.join(SAIDA, 'img', 'en', `${id}.webp`)))
     .slice(0, LIMITE_ARTES);
   console.log(`- ${artes.length} artes no total; faltam ${pendentes.length}`);
+  if (ORIGEM_IMAGENS) console.log(`- copiando as que já existem em ${ORIGEM_IMAGENS}`);
   let feitas = 0;
   let baixadas = 0;
+  let copiadas = 0;
   const falhas = [];
   let proxima = 0;
   async function trabalhador() {
     while (proxima < pendentes.length) {
       const id = pendentes[proxima++];
       try {
+        const destino = path.join(SAIDA, 'img', 'en', `${id}.webp`);
+        if (await copiarDoSitePublicado(id, destino)) {
+          copiadas++;
+          feitas++;
+          if (feitas % 250 === 0 || feitas === pendentes.length) {
+            console.log(`- ${feitas}/${pendentes.length} (${copiadas} copiadas do site, ${baixadas} baixadas, ${falhas.length} falhas)`);
+          }
+          continue;
+        }
         // Usa o cache do modo local (./run.sh) quando a imagem já foi baixada antes
         const cache = path.join(CACHE_DIR, 'img', 'ygoprodeck', 'full', `${id}.jpg`);
         let origem;
@@ -162,7 +204,7 @@ async function main() {
       }
       feitas++;
       if (feitas % 250 === 0 || feitas === pendentes.length) {
-        console.log(`- ${feitas}/${pendentes.length} (${baixadas} baixadas, ${falhas.length} falhas)`);
+        console.log(`- ${feitas}/${pendentes.length} (${copiadas} copiadas do site, ${baixadas} baixadas, ${falhas.length} falhas)`);
       }
     }
   }

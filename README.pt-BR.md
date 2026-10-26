@@ -157,6 +157,8 @@ npm run publicar        # envia para o Cloudflare Pages (precisa de `npx wrangle
 
 A primeira geração baixa cada arte em inglês do YGOPRODeck **uma única vez** (≈14.800 imagens, ~1,8 GB, no máximo 10 pedidos por segundo) e pode ser interrompida e retomada. As próximas gerações e publicações enviam só o que mudou. O resultado fica abaixo do limite de 20.000 arquivos do plano grátis do Cloudflare Pages. `npm run site-estatico -- --com-pt` inclui também as cartas em português — publique-as só com autorização do criador.
 
+**Atualização mensal.** O workflow [`Update cards`](.github/workflows/atualizar-site.yml) do GitHub Actions roda no dia 1º de cada mês (e quando você quiser, pela aba Actions): baixa a base de cartas mais recente, gera o site de novo e publica. As artes que já estão online são copiadas do próprio site publicado, então só as cartas recém-lançadas são baixadas do YGOPRODeck. Ele precisa de dois segredos no repositório: `CLOUDFLARE_API_TOKEN` (um token com permissão *Cloudflare Pages: Edit*) e `CLOUDFLARE_ACCOUNT_ID`.
+
 </details>
 
 <details>

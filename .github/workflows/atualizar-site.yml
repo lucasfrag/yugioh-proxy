@@ -1,0 +1,69 @@
+# Atualiza a versão online uma vez por mês: baixa a base de cartas do YGOPRODeck, gera o site
+# estático e publica no Cloudflare Pages.
+#
+# As artes que já estão no site publicado são copiadas de lá; só as cartas novas são baixadas
+# do YGOPRODeck (uma vez cada), como eles pedem.
+#
+# Segredos necessários (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN   token com permissão "Cloudflare Pages: Edit"
+#   CLOUDFLARE_ACCOUNT_ID  ID da conta do Cloudflare
+name: Update cards
+
+on:
+  schedule:
+    - cron: '0 6 1 * *' # dia 1 de cada mês, 06:00 UTC (03:00 em Brasília)
+  workflow_dispatch: # permite rodar na mão pela aba Actions
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atualizar-site
+  cancel-in-progress: false
+
+env:
+  SITE_URL: https://yugioh-proxy.pages.dev
+
+jobs:
+  update:
+    name: Update cards and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      DOTENV_CONFIG_QUIET: 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js (version from .nvmrc)
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download card database from YGOPRODeck
+        run: npm run setup
+
+      - name: Build static site (reusing images from the live site)
+        run: npm run site-estatico
+        env:
+          ORIGEM_IMAGENS: ${{ env.SITE_URL }}
+
+      - name: Publish to Cloudflare Pages
+        run: npm run publicar
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Summary
+        run: |
+          {
+            echo "### Cards updated"
+            echo ""
+            echo "- Cards in the index: $(node -e "console.log(require('./site-estatico/data/cartas.json').cartas.length)")"
+            echo "- Site: ${{ env.SITE_URL }}"
+          } >> "$GITHUB_STEP_SUMMARY"
