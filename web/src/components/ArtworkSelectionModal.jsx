@@ -1,16 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, Loader2 } from 'lucide-react';
-import { IDIOMAS, BAIXA_RESOLUCAO, isLowRes, pickBestImage } from '../utils/cardImages';
-
-const OCULTAR_BAIXA_KEY = 'ygo_proxies_ocultar_baixa';
-
-function loadOcultarBaixa() {
-  try {
-    return localStorage.getItem(OCULTAR_BAIXA_KEY) !== 'false';
-  } catch {
-    return true;
-  }
-}
+import { IDIOMAS } from '../utils/cardImages';
 
 export default function ArtworkSelectionModal({
   card,
@@ -27,12 +17,7 @@ export default function ArtworkSelectionModal({
   const [quantity, setQuantity] = useState(initialQuantity);
   const hasInitialImage = Boolean(initialImage);
 
-  // Opção "Ocultar baixa resolução" (marcada por padrão e lembrada entre as visitas)
-  const [ocultarBaixa, setOcultarBaixa] = useState(loadOcultarBaixa);
-  const ocultarBaixaRef = useRef(ocultarBaixa);
-  ocultarBaixaRef.current = ocultarBaixa;
-
-  // Busca todas as imagens da carta (PT, EN e OCG) ao abrir o modal
+  // Busca todas as imagens da carta ao abrir o modal
   useEffect(() => {
     let cancelado = false;
     async function fetchImagens() {
@@ -45,10 +30,9 @@ export default function ArtworkSelectionModal({
 
         // Idioma inicial: o da imagem já escolhida, senão Português (se houver), senão Inglês
         if (!hasInitialImage) {
-          const visiveisPt = filtrar(data.idiomas.pt, ocultarBaixaRef.current);
-          const inicial = visiveisPt.length > 0 ? 'pt' : 'en';
+          const inicial = data.idiomas.pt.length > 0 ? 'pt' : 'en';
           setIdioma(inicial);
-          setSelected(withIdioma(pickBestImage(filtrar(data.idiomas[inicial], ocultarBaixaRef.current)), inicial));
+          setSelected(withIdioma(data.idiomas[inicial][0], inicial));
         }
       } catch {
         if (!cancelado) setErro('Não foi possível carregar as imagens desta carta.');
@@ -60,29 +44,16 @@ export default function ArtworkSelectionModal({
 
   if (!card) return null;
 
-  const todas = (imagens && idioma && imagens[idioma]) || [];
-  const lista = filtrar(todas, ocultarBaixa);
-  const ocultas = todas.length - lista.length;
+  const lista = (imagens && idioma && imagens[idioma]) || [];
+  // As abas só aparecem quando há imagens em mais de um idioma (ex.: acervo PT local + artes EN)
+  const idiomasDisponiveis = imagens ? IDIOMAS.filter(({ id }) => imagens[id].length > 0) : [];
+  const mostrarAbas = idiomasDisponiveis.length > 1;
 
   const handleChangeIdioma = (novoIdioma) => {
     setIdioma(novoIdioma);
-    // Ao trocar de idioma, já seleciona a melhor imagem disponível nele
-    const melhor = pickBestImage(filtrar(imagens?.[novoIdioma], ocultarBaixa));
-    if (melhor) setSelected(withIdioma(melhor, novoIdioma));
-  };
-
-  const handleToggleOcultarBaixa = (valor) => {
-    setOcultarBaixa(valor);
-    try {
-      localStorage.setItem(OCULTAR_BAIXA_KEY, String(valor));
-    } catch {
-      // Armazenamento indisponível: a opção vale só até fechar a página
-    }
-    // Se a imagem selecionada acabou de ser ocultada, escolhe a melhor que sobrou
-    if (valor && selected && todas.some(img => img.url === selected.url && isLowRes(img))) {
-      const melhor = pickBestImage(filtrar(todas, true));
-      setSelected(melhor ? withIdioma(melhor, idioma) : null);
-    }
+    // Ao trocar de idioma, já seleciona a primeira arte dele
+    const primeira = imagens?.[novoIdioma]?.[0];
+    if (primeira) setSelected(withIdioma(primeira, novoIdioma));
   };
 
   const handleConfirm = () => {
@@ -111,39 +82,29 @@ export default function ArtworkSelectionModal({
         </div>
 
         <div className="modal-body">
-          <div className="language-tabs">
-            {IDIOMAS.map(({ id, nome }) => {
-              const total = imagens ? filtrar(imagens[id], ocultarBaixa).length : null;
-              return (
+          {mostrarAbas && (
+            <div className="language-tabs">
+              {idiomasDisponiveis.map(({ id, nome }) => (
                 <button
                   key={id}
                   type="button"
                   className={`language-tab ${idioma === id ? 'active' : ''}`}
                   onClick={() => handleChangeIdioma(id)}
-                  disabled={imagens !== null && imagens[id].length === 0}
                 >
                   {nome}
-                  {total !== null && <span className="language-tab-count">{total}</span>}
+                  <span className="language-tab-count">{imagens[id].length}</span>
                 </button>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
 
-          <p className="modal-instructions">
-            Escolha o idioma e a ilustração desejada para impressão. A resolução aparece abaixo de cada imagem.
-          </p>
-
-          <label className="checkbox-container modal-checkbox">
-            <input
-              type="checkbox"
-              checked={ocultarBaixa}
-              onChange={(e) => handleToggleOcultarBaixa(e.target.checked)}
-            />
-            <span className="checkmark"></span>
-            <span className="checkbox-text">
-              Ocultar scans em baixa resolução (menos de {BAIXA_RESOLUCAO}px)
-            </span>
-          </label>
+          {imagens && (
+            <p className="modal-instructions">
+              {lista.length > 1
+                ? 'Esta carta possui múltiplas ilustrações disponíveis. Selecione a versão desejada para impressão:'
+                : 'Confirme a ilustração e a quantidade de cópias para impressão:'}
+            </p>
+          )}
 
           {erro && <p className="modal-warning">{erro}</p>}
 
@@ -154,11 +115,7 @@ export default function ArtworkSelectionModal({
           )}
 
           {imagens && lista.length === 0 && (
-            <p className="modal-instructions">
-              {ocultas > 0
-                ? `Este idioma só tem ${ocultas} ${ocultas === 1 ? 'scan' : 'scans'} em baixa resolução. Desmarque a opção acima para ${ocultas === 1 ? 'vê-lo' : 'vê-los'}.`
-                : 'Nenhuma imagem disponível neste idioma.'}
-            </p>
+            <p className="modal-instructions">Nenhuma imagem disponível para esta carta.</p>
           )}
 
           <div className="artwork-grid-container">
@@ -173,11 +130,6 @@ export default function ArtworkSelectionModal({
                     <img src={img.miniatura} alt={`${card.nome} - ${img.rotulo}`} className="artwork-preview-image" loading="lazy" />
                     <div className="artwork-badge">{img.rotulo}</div>
                   </div>
-                  {img.largura && (
-                    <div className={`artwork-resolution ${isLowRes(img) ? 'low' : ''}`}>
-                      {img.largura} × {img.altura}px{isLowRes(img) ? ' · baixa' : ''}
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
@@ -212,14 +164,8 @@ export default function ArtworkSelectionModal({
   );
 }
 
-// Remove os scans em baixa resolução quando a opção está marcada
-function filtrar(lista, ocultarBaixa) {
-  if (!lista) return [];
-  return ocultarBaixa ? lista.filter(img => !isLowRes(img)) : lista;
-}
-
 // Guarda só o necessário da imagem escolhida (vai para o localStorage junto com a lista)
 function withIdioma(img, idioma) {
   if (!img) return null;
-  return { url: img.url, miniatura: img.miniatura, rotulo: img.rotulo, largura: img.largura, idioma };
+  return { url: img.url, miniatura: img.miniatura, rotulo: img.rotulo, idioma };
 }

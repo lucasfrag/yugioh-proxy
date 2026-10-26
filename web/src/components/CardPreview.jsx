@@ -77,7 +77,7 @@ export default function CardPreview({ layoutResult, borderSize, sheetSize, useSa
                     left: '10mm',
                     right: '10mm',
                     bottom: '10mm',
-                    border: '1px dashed rgba(34, 211, 238, 0.35)',
+                    border: '1px dashed color-mix(in srgb, var(--accent) 35%, transparent)',
                     pointerEvents: 'none',
                     borderRadius: '2px',
                     boxSizing: 'border-box'

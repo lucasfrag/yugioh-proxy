@@ -7,6 +7,7 @@ import ArtworkSelectionModal from './components/ArtworkSelectionModal';
 import { calculatePrintLayout } from './utils/printMath';
 import { getItemImage, getItemKey } from './utils/cardImages';
 import Logo from './components/Logo';
+import ThemeSwitcher from './components/ThemeSwitcher';
 
 export default function App() {
   // Lista de proxies a serem impressas
@@ -194,7 +195,10 @@ export default function App() {
           <Logo className="logo-mark" size={32} />
           <h1>Yu-Gi-Oh! <span>Proxies</span></h1>
         </div>
-        <p className="nav-subtitle">PT · EN · OCG</p>
+        <div className="nav-actions">
+          <p className="nav-subtitle">PT · EN · OCG</p>
+          <ThemeSwitcher />
+        </div>
       </header>
 
       <div className="layout-body">
@@ -211,6 +215,14 @@ export default function App() {
             {/* Rodapé */}
             <footer className="support-footer">
               <div className="footer-divider"></div>
+              <p className="footer-source">
+                Cartas em português criadas por{' '}
+                <a href="https://cartascaseiras.blogspot.com/2021/04/cartas-de-yu-gi-oh-pt-br-para-imprimir.html" target="_blank" rel="noopener noreferrer">
+                  Emula Animes
+                </a>
+                {' '}· Artes em inglês:{' '}
+                <a href="https://ygoprodeck.com" target="_blank" rel="noopener noreferrer">YGOPRODeck</a>
+              </p>
               <p className="footer-credits">Yu-Gi-Oh! Proxies &copy; {new Date().getFullYear()}</p>
             </footer>
           </div>

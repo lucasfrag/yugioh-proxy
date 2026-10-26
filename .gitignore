@@ -3,3 +3,12 @@ web/dist/
 api/data/
 .env
 *.log
+
+# Cartas em português baixadas do autor (./run.sh cartas-pt) — não são deste projeto
+api/imagens/Cartas Monstro/
+api/imagens/Cartas Magia/
+api/imagens/Cartas Armadilha/
+api/imagens/Fichas-Tokens/
+api/imagens/verso/Emula Animes - *
+api/imagens/CREDITOS.txt
+api/imagens/.sem-cartas-pt

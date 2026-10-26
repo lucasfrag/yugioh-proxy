@@ -4,7 +4,6 @@ const path = require('path');
 const fs = require('fs');
 const { IMAGE_FOLDERS, IMAGES_BASE_DIR, CACHE_DIR, USER_AGENT, WEB_DIST_DIR } = require('./config');
 const { ensureCached, limiter } = require('./utils/cache');
-const { findScan } = require('./utils/yugipedia');
 
 const app = express();
 
@@ -32,7 +31,7 @@ app.use('/imagens/tokens', express.static(IMAGE_FOLDERS.tokens));
 const cardBackDir = path.join(IMAGES_BASE_DIR, 'verso');
 app.use('/imagens/back', express.static(cardBackDir));
 
-// Imagens remotas (YGOPRODeck e Yugipedia): baixadas uma vez e servidas do cache local
+// Imagens remotas (artes do YGOPRODeck e versos oficiais da Yugipedia): baixadas uma vez e servidas do cache local
 const YGOPRODECK_URLS = {
   full: (id) => `https://images.ygoprodeck.com/images/cards/${id}.jpg`,
   small: (id) => `https://images.ygoprodeck.com/images/cards_small/${id}.jpg`
@@ -43,7 +42,7 @@ const REMOTE_BACKS = {
   'Back-KR.png': 'https://ms.yugipedia.com/7/70/Back-KR.png'
 };
 const ygoprodeckQueue = limiter(6);
-const yugipediaQueue = limiter(3);
+const backsQueue = limiter(3);
 const CACHE_OPTIONS = { maxAge: '365d', immutable: true };
 
 app.get('/imagens/ygoprodeck/:size/:file', async (req, res, next) => {
@@ -59,37 +58,12 @@ app.get('/imagens/ygoprodeck/:size/:file', async (req, res, next) => {
   }
 });
 
-app.get('/imagens/yugipedia/:cardId/:size/:file', async (req, res, next) => {
-  const { cardId, size, file } = req.params;
-  if (size !== 'full' && size !== 'thumb') return res.sendStatus(404);
-  try {
-    // Só servimos arquivos que vieram da galeria da carta (evita virar um proxy aberto)
-    const scan = await findScan(Number(cardId), file);
-    if (!scan) return res.sendStatus(404);
-    const options = { userAgent: USER_AGENT, queue: yugipediaQueue };
-    const full = path.join(CACHE_DIR, 'img', 'yugipedia', 'full', path.basename(file));
-    if (size === 'thumb') {
-      const thumb = path.join(CACHE_DIR, 'img', 'yugipedia', 'thumb', path.basename(file));
-      try {
-        await ensureCached(thumb, scan.thumbUrl, options);
-        return res.sendFile(thumb, CACHE_OPTIONS);
-      } catch {
-        // Nem toda imagem tem miniatura gerada na Yugipedia; usa a imagem completa
-      }
-    }
-    await ensureCached(full, scan.url, options);
-    res.sendFile(full, CACHE_OPTIONS);
-  } catch (err) {
-    next(err);
-  }
-});
-
 app.get('/imagens/verso-remoto/:file', async (req, res, next) => {
   const remote = REMOTE_BACKS[req.params.file];
   if (!remote) return res.sendStatus(404);
   try {
     const local = path.join(CACHE_DIR, 'img', 'verso', req.params.file);
-    await ensureCached(local, remote, { userAgent: USER_AGENT, queue: yugipediaQueue });
+    await ensureCached(local, remote, { userAgent: USER_AGENT, queue: backsQueue });
     res.sendFile(local, CACHE_OPTIONS);
   } catch (err) {
     next(err);

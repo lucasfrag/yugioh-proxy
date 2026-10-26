@@ -4,7 +4,6 @@ const fs = require('fs');
 const Fuse = require('fuse.js');
 const { CARDS_DB_FILE } = require('../config');
 const { normalizeName } = require('../utils/normalizer');
-const { getScans } = require('../utils/yugipedia');
 
 // Carregar as cartas em memória na inicialização
 let cards = [];
@@ -61,50 +60,32 @@ function getDynamicCard(card, req) {
 
 /**
  * Lista todas as imagens disponíveis de uma carta, separadas por idioma.
- * - pt: acervo local em HD (se houver) + scans PT da Yugipedia
- * - en: artes digitais do YGOPRODeck + scans EN da Yugipedia
- * - ocg: scans japoneses da Yugipedia
+ * Só imagens digitais (renderizações limpas da carta, sem reflexo nem desgaste):
+ * - pt: acervo local em HD, se `IMAGES_BASE_DIR` tiver as pastas de cartas
+ * - en: artes do YGOPRODeck (813 x 1185 px, uma por arte alternativa)
+ * - ocg: ainda sem fonte digital
  */
-async function getCardImages(card, req) {
+function getCardImages(card, req) {
   const targetHost = process.env.HOST || `${req.protocol}://${req.get('host')}`;
   const idiomas = { pt: [], en: [], ocg: [] };
 
   const localImages = (card.imagens || []).map(img => img.replace(/^http(s)?:\/\/[^\/]+/, targetHost));
   localImages.forEach((url, idx) => {
-    idiomas.pt.push({ url, miniatura: url, rotulo: `Acervo HD ${idx + 1}`, fonte: 'local' });
+    idiomas.pt.push({ url, miniatura: url, rotulo: `Arte ${idx + 1}`, fonte: 'local' });
   });
 
   (card.artes || []).forEach((id, idx) => {
     idiomas.en.push({
       url: `${targetHost}/imagens/ygoprodeck/full/${id}.jpg`,
       miniatura: `${targetHost}/imagens/ygoprodeck/small/${id}.jpg`,
-      rotulo: card.artes.length > 1 ? `Arte ${idx + 1} (digital)` : 'Arte digital',
-      largura: 421,
-      altura: 614,
+      rotulo: `Arte ${idx + 1}`,
+      largura: 813,
+      altura: 1185,
       fonte: 'ygoprodeck'
     });
   });
 
-  let erro = null;
-  try {
-    const gallery = await getScans(card, { refresh: req.query.refresh === '1' });
-    for (const scan of gallery.scans) {
-      const file = encodeURIComponent(scan.file);
-      idiomas[scan.lang].push({
-        url: `${targetHost}/imagens/yugipedia/${card.id}/full/${file}`,
-        miniatura: `${targetHost}/imagens/yugipedia/${card.id}/thumb/${file}`,
-        rotulo: [scan.set, scan.rarity, scan.extra].filter(Boolean).join(' · '),
-        largura: scan.width,
-        altura: scan.height,
-        fonte: 'yugipedia'
-      });
-    }
-  } catch (error) {
-    console.error(`[Yugipedia] ${card.nome_en}:`, error.message);
-    erro = 'Não foi possível consultar a Yugipedia agora. Tente novamente em instantes.';
-  }
-
-  return { idiomas, erro };
+  return { idiomas, erro: null };
 }
 
 // GET /api/cartas - Listar cartas com filtros e paginação
@@ -253,7 +234,7 @@ router.get('/backs', (req, res) => {
 });
 
 // GET /api/cartas/:id/imagens - Todas as imagens da carta por idioma (PT, EN e OCG)
-router.get('/:id/imagens', async (req, res) => {
+router.get('/:id/imagens', (req, res) => {
   const id = parseInt(req.params.id, 10);
   const card = cards.find(c => c.id === id || (c.artes && c.artes.includes(id)));
 
@@ -261,7 +242,7 @@ router.get('/:id/imagens', async (req, res) => {
     return res.status(404).json({ erro: 'Carta não encontrada com o ID fornecido.' });
   }
 
-  res.json(await getCardImages(card, req));
+  res.json(getCardImages(card, req));
 });
 
 // GET /api/cartas/:id - Buscar carta por ID exato
